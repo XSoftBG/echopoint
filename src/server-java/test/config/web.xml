@@ -1,0 +1,68 @@
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <display-name>EchoPoint Test Application</display-name>
+    <description>
+      EchoPoint component test application.
+    </description>
+
+    <servlet>
+      <servlet-name>Servlet</servlet-name>
+      <servlet-class>echopoint.TestServlet</servlet-class>
+      <init-param>
+        <param-name>echo.debug</param-name>
+        <param-value>true</param-value>
+      </init-param>
+      <init-param>
+        <param-name>echopoint.style.DefaultFont.typeface</param-name>
+        <param-value>'Verdana, Times New Roman, Lucida Grande'</param-value>
+      </init-param>
+      <init-param>
+        <param-name>echopoint.style.DefaultFont.style</param-name>
+        <param-value>PLAIN</param-value>
+      </init-param>
+      <init-param>
+        <param-name>echopoint.style.DefaultFont.size</param-name>
+        <param-value>10pt</param-value>
+      </init-param>
+      <init-param>
+        <param-name>echopoint.style.Background.value</param-name>
+        <param-value>#32476a</param-value>
+      </init-param>
+    </servlet>
+
+    <servlet>
+      <servlet-name>FcktestServlet</servlet-name>
+      <servlet-class>echopoint.fcktest.Application</servlet-class>
+      <init-param>
+        <param-name>echo.debug</param-name>
+        <param-value>true</param-value>
+      </init-param>
+    </servlet>
+
+    <servlet>
+      <servlet-name>CktestServlet</servlet-name>
+      <servlet-class>echopoint.cktest.Application</servlet-class>
+      <init-param>
+        <param-name>echo.debug</param-name>
+        <param-value>true</param-value>
+      </init-param>
+    </servlet>
+    
+    <servlet-mapping>
+      <servlet-name>Servlet</servlet-name>
+      <url-pattern>/index.html</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>FcktestServlet</servlet-name>
+      <url-pattern>/fcktest</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>CktestServlet</servlet-name>
+      <url-pattern>/cktest</url-pattern>
+    </servlet-mapping>
+</web-app>

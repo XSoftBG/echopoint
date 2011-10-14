@@ -1,0 +1,5 @@
+.gallery_outer { overflow: auto; } 
+.gallery_outer ol, .gallery_outer ul { list-style-type: none; margin-left: 0px; margin-right: 0px; margin-top: 0px; margin-bottom: 0px; padding-left: 0px; padding-right: 0px; padding-top: 0px; padding-bottom: 0px; }
+.thumbs li { border: 1px solid #000; margin: 3px; }
+.gallery_outer ul.main_galery_image img { margin-left: 5px; margin-right: 5px; margin-top: 0px; margin-bottom: 0px; padding: 5px; border: 1px solid #000; }
+.gallery_empty { padding: 5px; border: 1px solid #000; font: bold 12pt Verdana; }

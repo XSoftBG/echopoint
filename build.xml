@@ -1,0 +1,577 @@
+<?xml version='1.0'?>
+
+<!--
+ * This file is part of the Echo Point Project.  This project is a
+ * collection of Components that have extended the Echo Web Application
+ * Framework.
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the 'License'); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an 'AS IS' basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+-->
+
+
+<project name='EchoPoint' default='default' basedir='.' xmlns:ivy='antlib:org.apache.ivy.ant'>
+
+  <property environment='env' />
+  <property file='ant.properties' />
+  <property name='ivy.checksums' value='' />
+
+  <patternset id='fileset.resources'>
+    <include name='**/*properties' />
+    <include name='**/*html' />
+    <include name='**/*js' />
+    <include name='**/*gif' />
+    <include name='**/*jpg' />
+    <include name='**/*png' />
+    <include name='**/*xml' />
+    <include name='**/*stylesheet' />
+    <include name='**/*css' />
+  </patternset>
+
+
+  <path id='compile.classpath'>
+    <fileset  dir='${dir.lib}'>
+      <include name='*.jar' />
+      <exclude name='junit*.jar' />
+      <exclude name='*sources*.jar' />
+      <exclude name='*javadoc*.jar' />
+      <exclude name='yuicompressor*.jar' />
+    </fileset>
+  </path>
+
+
+  <!-- ************************************************************************************************** -->
+  <target name='start'>
+    <echo>
+      Building EchoPoint
+      Version : ${version}
+      Appserver : ${dir.appserver}
+    </echo>
+  </target>
+
+<!-- ************************************************************************************************** -->
+  <!-- Initialization Tasks -->
+  <target name='init' depends='init-ivy, resolve'>
+    <mkdir dir='${dir.build.api}'/>
+    <mkdir dir='${dir.dist}'/>
+  </target>
+
+
+<!-- ************************************************************************************************** -->
+  <!-- Clean -->
+  <target name='clean'
+    description='Clears all generated files, including build directories, distributables, and documentation'>
+    <delete dir='${dir.build}'/>
+    <delete dir='${dir.dist}'/>
+    <delete dir='${dir.docs.api}'/>
+  </target>
+
+
+<!-- ************************************************************************************************** -->
+  <!-- Compile EchoPoint library classes -->
+  <target name='compile' depends='init'
+    description='Compile EchoPoint main classes.'>
+
+    <javac srcdir='${dir.src.server.app}' destdir='${dir.build.api}'
+      debug='${debug}' deprecation='yes'
+      source='${jdk.version}' target='${jdk.version}'
+      includeantruntime='yes'>
+      <classpath refid='compile.classpath'/>
+    </javac>
+
+    <javac srcdir='${dir.src.server.webcontainer}' destdir='${dir.build.api}'
+      debug='${debug}' deprecation='yes'
+      source='${jdk.version}' target='${jdk.version}'
+      includeantruntime='yes'>
+      <classpath refid='compile.classpath'/>
+    </javac>
+  </target>
+
+<!-- ************************************************************************************************** -->
+  <target name='jar' depends='compile'
+    description='Archives the EchoPoint class library.'>
+    <copy todir='${dir.build.api}'>
+      <fileset dir='${dir.build.api}'>
+        <patternset refid='fileset.resources' />
+      </fileset>
+    </copy>
+
+    <copy todir='${dir.build.resource}'>
+      <fileset dir='${dir.src.client.app}'>
+        <patternset refid='fileset.resources' />
+      </fileset>
+    </copy>
+
+    <copy todir='${dir.build.images}'>
+      <fileset dir='${dir.src.client.images}'>
+        <patternset refid='fileset.resources' />
+      </fileset>
+    </copy>
+
+    <delete file='${dir.dist}/${jarname}.jar' />
+    <jar jarfile='${dir.dist}/${jarname}.jar' basedir='${dir.build.api}'>
+      <metainf dir='${dir.src.server.webcontainer}/META-INF'>
+        <patternset refid='fileset.resources' />
+      </metainf>
+    </jar>
+
+    <delete file='${dir.dist}/${jarname}-all.jar' />
+    <jar jarfile='${dir.dist}/${jarname}-all.jar' basedir='${dir.build.api}'>
+      <zipgroupfileset dir="${dir.lib}"
+                       includes="commons*.jar, jdom*.jar, log4j*.jar, mime*.jar, slf4j*.jar, xstream*.jar, xpp3*.jar"
+                       excludes="Echo*.jar, *sources*.jar, *javadoc*.jar" />
+      <metainf dir='${dir.src.server.webcontainer}/META-INF'>
+        <patternset refid='fileset.resources' />
+      </metainf>
+    </jar>
+  </target>
+
+<!-- ************************************************************************************************** -->
+  <path id='test.classpath'>
+    <path refid='compile.classpath' />
+    <fileset  dir='${dir.lib}'>
+      <include name='junit*.jar' />
+    </fileset>
+    <pathelement path='${dir.dist}/${jarname}-all.jar' />
+  </path>
+
+  <!-- Compile EchoPoint Test classes -->
+  <target name='test' depends='jar'
+    description='Compile the EchoPoint Test classes.'>
+
+    <mkdir dir='${dir.build.test}' />
+
+    <javac srcdir='${dir.src.server.test}' destdir='${dir.build.test}'
+      debug='${debug}' deprecation='yes' includeantruntime='yes'>
+      <classpath refid='test.classpath'/>
+    </javac>
+
+    <!-- make a WAR file -->
+    <jar jarfile='${dir.dist}/echopointtest.jar' basedir='${dir.build.test}' />
+
+    <delete file='${dir.dist}/${testwarfile}' />
+    <war destfile='${dir.dist}/${testwarfile}'
+      webxml='${dir.src.server.test}/config/web.xml'>
+      <lib file='${dir.dist}/${jarname}-all.jar' />
+      <lib file='${dir.dist}/echopointtest.jar' />
+      <lib dir='${dir.lib}'>
+        <include name="Echo*.jar" />
+        <include name="junit*.jar" />
+        <exclude name="*sources*.jar" />
+        <exclude name="*javadoc*.jar" />
+      </lib>
+      <fileset dir='${dir.src.client.test}/' includes='image/' />
+      <fileset dir='${dir.src.server.test}/fckeditor.src/' includes='fckeditor/' />
+    </war>
+
+    <delete file='${dir.dist}/echopointtest.jar' />
+  </target>
+
+
+  <!-- Prepares a compressed package for deploying client-test application -->
+  <target name='clienttest' depends='init'
+    description='Creates archive of client-test application.'>
+
+    <delete dir='${dir.src.client.test.tempdir}' />
+    <mkdir dir='${dir.src.client.test.tempdir}' />
+    <concat destfile='${dir.src.client.test.tempdir}/Concat.js'
+      fixlastline='true'>
+      <filelist dir='${dir.src.client.test}/lib/corejs/'>
+        <file name='Core.js'/>
+        <file name='Core.Web.js'/>
+      </filelist>
+      <filelist dir='${dir.src.client.test}/lib/echo/'>
+        <file name='Application.js'/>
+        <file name='Render.js'/>
+        <file name='Sync.js'/>
+        <file name='Sync.Composite.js'/>
+        <file name='Serial.js'/>
+        <file name='Client.js'/>
+        <file name='FreeClient.js'/>
+        <file name='DebugConsole.js'/>
+        <file name='Arc.js'/>
+        <file name='Sync.ArrayContainer.js'/>
+        <file name='Sync.Button.js'/>
+        <file name='Sync.ContentPane.js'/>
+        <file name='Sync.Grid.js'/>
+        <file name='Sync.Label.js'/>
+        <file name='Sync.List.js'/>
+        <file name='Sync.SplitPane.js'/>
+        <file name='Sync.TextComponent.js'/>
+        <file name='Sync.WindowPane.js'/>
+      </filelist>
+      <filelist dir='${dir.src.client.test}/lib/extras/'>
+        <file name='Extras.js'/>
+        <file name='Application.AccordionPane.js'/>
+        <file name='Sync.AccordionPane.js'/>
+        <file name='Application.Menu.js'/>
+        <file name='Sync.Menu.js'/>
+        <file name='Application.TransitionPane.js'/>
+        <file name='Sync.TransitionPane.js'/>
+        <file name='Application.TabPane.js'/>
+        <file name='Sync.TabPane.js'/>
+        <file name='Application.ColorSelect.js'/>
+        <file name='Sync.ColorSelect.js'/>
+        <file name='Application.RichTextInput.js'/>
+        <file name='Sync.RichTextInput.js'/>
+        <file name='Application.RichTextArea.js'/>
+        <file name='Sync.RichTextArea.js'/>
+        <file name='Application.RichTextInput.js'/>
+        <file name='Sync.RichTextInput.js'/>
+        <file name='Application.ToolTipContainer.js'/>
+        <file name='Sync.ToolTipContainer.js'/>
+      </filelist>
+      <filelist dir='${dir.src.client.app}'>
+        <file name='Echopoint.js'/>
+        <file name='Application.AbstractContainer.js'/>
+        <file name='Sync.AbstractContainer.js'/>
+        <file name='Application.HtmlComponent.js'/>
+        <file name='Sync.AbstractHtmlComponent.js'/>
+        <file name='Application.Anchor.js'/>
+        <file name='Sync.Anchor.js'/>
+        <file name='Application.BorderLayout.js'/>
+        <file name='Sync.BorderLayout.js'/>
+        <file name='Sync.DirectHtml.js'/>
+        <file name='Sync.HtmlLabel.js'/>
+        <file name='Sync.HtmlLayout.js'/>
+        <file name='Application.HttpPane.js'/>
+        <file name='Sync.HttpPane.js'/>
+        <file name='Application.AbstractImage.js'/>
+        <file name='Sync.AbstractImage.js'/>
+        <file name='Application.ImageIcon.js'/>
+        <file name='Sync.ImageIcon.js'/>
+        <file name='Application.ImageMap.js'/>
+        <file name='Sync.ImageMap.js'/>
+        <file name='Application.InfoWindow.js'/>
+        <file name='Sync.InfoWindow.js'/>
+        <file name='Application.LightBox.js'/>
+        <file name='Sync.LightBox.js'/>
+        <file name='Application.ProgressBar.js'/>
+        <file name='Application.PushButton.js'/>
+        <file name='Sync.ProgressBar.js'/>
+        <file name='Sync.PushButton.js'/>
+        <file name='Application.Strut.js'/>
+        <file name='Sync.Strut.js'/>
+        <file name='Application.TextField.js'/>
+        <file name='Sync.TextField.js'/>
+        <file name='Sync.RegexTextField.js'/>
+        <file name='Sync.NumberTextField.js'/>
+        <file name='Application.TagCloud.js'/>
+        <file name='Sync.TagCloud.js'/>
+        <file name='Sync.TextArea.js'/>
+      </filelist>
+      <filelist dir='${dir.src.client.app}/tucana'>
+        <file name='Application.FileUploadSelector.js'/>
+        <file name='Sync.FileUploadSelector.js'/>
+      </filelist>
+      <filelist dir='${dir.src.client.app}/google/chart'>
+        <file name='Model.Google.js'/>
+        <file name='Application.Chart.js'/>
+        <file name='Sync.AbstractChart.js'/>
+        <file name='Sync.SimpleChart.js'/>
+        <file name='Sync.AdvancedChart.js'/>
+        <file name='Sync.BarChart.js'/>
+        <file name='Sync.LineChart.js'/>
+        <file name='Sync.Sparkline.js'/>
+        <file name='Sync.ScatterPlot.js'/>
+        <file name='Sync.RadarChart.js'/>
+        <file name='Sync.PieChart.js'/>
+        <file name='Sync.VennDiagram.js'/>
+        <file name='Sync.Map.js'/>
+        <file name='Sync.Meter.js'/>
+        <file name='Sync.QRCode.js'/>
+      </filelist>
+      <filelist dir='${dir.src.client.app}/jquery'>
+        <file name='jquery.js'/>
+        <file name='jquery-CallbackContext.js'/>
+        <file name='jquery-ui-1.7.1.core.min.js'/>
+        <file name='jquery-ui-1.7.1.effects.min.js'/>
+        <file name='Application.Clock.js'/>
+        <file name='Sync.Clock.js'/>
+        <file name='jquery.jclock.js'/>
+        <file name='Application.TooltipContainer.js'/>
+        <file name='Sync.TooltipContainer.js'/>
+        <file name='jquery.qtip-1.0.0-rc3.js'/> <!-- the .min.js file gives compression errors -->
+      </filelist>
+      <filelist dir='${dir.src.client.test}/app'>
+        <file name='TestAppDeploy.js'/>
+        <file name='Default.StyleSheet.js'/>
+        <file name='MainContent.js'/>
+        <file name='ComponentList.js'/>
+        <file name='Button.js'/>
+        <file name='AnchorTest.js'/>
+        <file name='BarChartTest.js'/>
+        <file name='BorderLayoutTest.js'/>
+        <file name='ClockTest.js'/>
+        <file name='DirectHtmlTest.js'/>
+        <file name='HtmlLabelTest.js'/>
+        <file name='HtmlLayoutTest.js'/>
+        <file name='HttpPaneTest.js'/>
+        <file name='ImageIconTest.js'/>
+        <file name='ImageMapTest.js'/>
+        <file name='InfoWindowTest.js'/>
+        <file name='LightBoxTest.js'/>
+        <file name='LineChartTest.js'/>
+        <file name='MapTest.js'/>
+        <file name='MeterTest.js'/>
+        <file name='NumberTextFieldTest.js'/>
+        <file name='PieChartTest.js'/>
+        <file name='ProgressBarTest.js'/>
+        <file name='PushButtonTest.js'/>
+        <file name='QRCodeTest.js'/>
+        <file name='RadarChartTest.js'/>
+        <file name='RegexTextFieldTest.js'/>
+        <file name='ScatterPlotTest.js'/>
+        <file name='SparklineTest.js'/>
+        <file name='StrutTest.js'/>
+        <file name='TagCloudTest.js'/>
+        <file name='TextAreaTest.js'/>
+        <file name='TooltipContainerTest.js'/>
+        <file name='VennDiagramTest.js'/>
+      </filelist>
+    </concat>
+
+    <java fork='true' jar='${yuicompressor.lib.jar}'
+      output='${dir.src.client.test.tempdir}/AppCompressed.js'>
+      <arg value='${dir.src.client.test.tempdir}/Concat.js' />
+    </java>
+
+    <delete file='${dir.src.client.test.tempdir}/Concat.js' />
+
+    <copy todir='${dir.src.client.test.tempdir}'>
+      <fileset dir='${dir.src.client.test}'>
+        <exclude name='index*.html' />
+        <exclude name='web.xml' />
+      </fileset>
+    </copy>
+    <copy todir='${dir.src.client.test.tempdir}/resource/images'>
+      <fileset dir='${dir.src.client.images}' />
+    </copy>
+    <copy file='${dir.src.client.test}/index-out.html'
+      tofile='${dir.src.client.test.tempdir}/index.html'
+      overwrite='true' />
+
+    <war destfile='${dir.dist}/${clienttestwarfile}'
+      webxml='${dir.src.client.test}/web.xml'
+      basedir='${dir.src.client.test.tempdir}' />
+
+    <delete dir='${dir.src.client.test.tempdir}' />
+
+  </target>
+
+
+<!-- ************************************************************************************************** -->
+  <!-- Deploys the WAR files to Catalina Tomcat. -->
+  <target name='deploy' depends='test, clienttest'
+    description='Deploys the test war file to application server'
+    if='dir.appserver.deploy'>
+
+    <echo>Deploying test WAR file to: ${dir.appserver.deploy}</echo>
+    <delete file='${dir.appserver.deploy}/${testwarfile}' />
+    <copy file='${dir.dist}/${testwarfile}' todir='${dir.appserver.deploy}' />
+    <delete file='${dir.appserver.deploy}/${clienttestwarfile}' />
+    <copy file='${dir.dist}/${clienttestwarfile}' todir='${dir.appserver.deploy}' />
+  </target>
+
+
+
+  <path id='javadoc.classpath'>
+    <fileset  dir='${dir.lib}'>
+      <include name='*.jar' />
+      <exclude name='*sources*.jar' />
+      <exclude name='*javadoc*.jar' />
+      <exclude name='yuicompressor*.jar' />
+    </fileset>
+    <pathelement path='${dir.build}' />
+  </path>
+
+<!-- ************************************************************************************************** -->
+  <!-- Create full API documentation -->
+  <target name='doc' depends='compile'
+    description='Creates full JavaDoc documentation for the EchoPoint API'>
+
+    <delete dir='${dir.docs.api.app}'/>
+    <mkdir dir='${dir.docs.api.app}'/>
+
+    <javadoc sourcepath='${dir.src.server.app}' packagenames='echopoint.*'
+      destdir='${dir.docs.api.app}' additionalparam='-breakiterator'
+      classpathref='javadoc.classpath' version='yes'
+      author='yes' use='yes' splitindex='yes'
+      Overview='${dir.src.server.app}/overview.html'
+      Header='${javadoc.header}' DocTitle='${javadoc.doctitle.app}'
+      Windowtitle='${javadoc.windowtitle}' stylesheetfile='${javadoc.cssfile}'
+      linksource='yes' access='protected' defaultexcludes='yes' >
+
+      <link href='http://docs.rakeshv.org/java/j2sdk1.5/docs/api/' />
+      <link href='http://docs.rakeshv.org/java/j2sdkee1.4/' />
+      <link href='http://docs.rakeshv.org/java/echo/core/app/' />
+      <link href='http://docs.rakeshv.org/java/echo/core/webcontainer/' />
+      <link href='http://docs.rakeshv.org/java/echo/extras/app/' />
+      <link href='http://junit.sourceforge.net/javadoc/' />
+    </javadoc>
+
+    <delete dir='${dir.docs.api.webcontainer}'/>
+    <mkdir dir='${dir.docs.api.webcontainer}'/>
+
+    <javadoc sourcepath='${dir.src.server.webcontainer}' packagenames='echopoint.*'
+      destdir='${dir.docs.api.webcontainer}' additionalparam='-breakiterator'
+      classpathref='javadoc.classpath' version='yes'
+      author='yes' use='yes' splitindex='yes'
+      Overview='${dir.src.server.webcontainer}/overview.html'
+      Header='${javadoc.header}' DocTitle='${javadoc.doctitle.webcontainer}'
+      Windowtitle='${javadoc.windowtitle}' stylesheetfile='${javadoc.cssfile}'
+      linksource='yes' access='protected' defaultexcludes='yes' >
+
+      <link href='${jse.doc.link}' />
+      <link href='${jee.doc.link}' />
+      <link href='${echo.app.doc.link}' />
+      <link href='${echo.webcontainer.doc.link}' />
+      <link href='${extras.app.doc.link}' />
+      <link href='../app/' />
+    </javadoc>
+
+  </target>
+
+
+<!-- ************************************************************************************************** -->
+  <target name='release' depends='clean, compile'
+    description='Prepares the versioned EchoPoint jar and zip files'>
+
+    <delete file='${dir.dist}/echopoint-${version}.jar' />
+    <delete file='${dir.dist}/echopoint-${version}.zip' />
+    <copy todir='${dir.build.api}'>
+      <fileset dir='${dir.build.api}'>
+        <patternset refid='fileset.resources' />
+      </fileset>
+    </copy>
+
+    <copy todir='${dir.build.resource}'>
+      <fileset dir='${dir.src.client.app}'>
+        <patternset refid='fileset.resources' />
+      </fileset>
+    </copy>
+
+    <copy todir='${dir.build.images}'>
+      <fileset dir='${dir.src.client.images}'>
+        <patternset refid='fileset.resources' />
+      </fileset>
+    </copy>
+
+    <jar jarfile='${dir.dist}/echopoint-${version}.jar'
+      basedir='${dir.build.api}'>
+      <metainf dir='${dir.src.server.webcontainer}/META-INF'>
+        <patternset refid='fileset.resources' />
+      </metainf>
+    </jar>
+
+    <zip destfile='${dir.dist}/echopoint-${version}.zip'>
+      <fileset dir='${dir.dist}'>
+        <include name='echopoint-${version}.jar' />
+      </fileset>
+      <fileset dir='${dir.lib}'>
+        <include  name='*.jar' />
+      </fileset>
+    </zip>
+  </target>
+
+<!-- ************************************************************************************************** -->
+  <target name='update'
+    description='Updates client application JS library from Echo3'
+    if='dir.echo'>
+    <copy todir='${dir.src.client.test}/lib/corejs'
+      overwrite='true' preservelastmodified='true'>
+      <filelist dir='${dir.echo}/src/client/corejs/'>
+        <file name='Core.js'/>
+        <file name='Core.Web.js'/>
+      </filelist>
+    </copy>
+
+    <copy todir='${dir.src.client.test}/lib/echo'
+      overwrite='true' preservelastmodified='true'>
+      <filelist dir='${dir.echo}/src/client/echo/'>
+        <file name='Application.js'/>
+        <file name='Render.js'/>
+        <file name='Sync.js'/>
+        <file name='Serial.js'/>
+        <file name='Client.js'/>
+        <file name='FreeClient.js'/>
+        <file name='Arc.js'/>
+        <file name='Sync.ArrayContainer.js'/>
+        <file name='Sync.Button.js'/>
+        <file name='Sync.ContentPane.js'/>
+        <file name='Sync.Grid.js'/>
+        <file name='Sync.Label.js'/>
+        <file name='Sync.List.js'/>
+        <file name='Sync.SplitPane.js'/>
+        <file name='Sync.TextComponent.js'/>
+        <file name='Sync.WindowPane.js'/>
+      </filelist>
+    </copy>
+
+    <copy todir='${dir.src.client.test}/lib/extras'
+      overwrite='true' preservelastmodified='true'>
+      <filelist dir='${dir.echo.extras}/src/client/extras/'>
+        <file name='Extras.js'/>
+        <file name='Application.AccordionPane.js'/>
+        <file name='Sync.AccordionPane.js'/>
+        <file name='Application.Menu.js'/>
+        <file name='Sync.Menu.js'/>
+        <file name='Application.TransitionPane.js'/>
+        <file name='Sync.TransitionPane.js'/>
+        <file name='Application.TabPane.js'/>
+        <file name='Sync.TabPane.js'/>
+        <file name='Application.ColorSelect.js'/>
+        <file name='Sync.ColorSelect.js'/>
+        <file name='Application.RichTextInput.js'/>
+        <file name='Sync.RichTextInput.js'/>
+        <file name='Application.RichTextArea.js'/>
+        <file name='Sync.RichTextArea.js'/>
+        <file name='Application.ToolTipContainer.js'/>
+        <file name='Sync.ToolTipContainer.js'/>
+      </filelist>
+    </copy>
+  </target>
+
+<!-- ************************************************************************************************** -->
+  <target name='default'
+    depends='start,clean,compile,jar,release' description='Default build'>
+
+    <echo>
+      Done Building EchoPoint
+      Version : ${version}
+    </echo>
+  </target>
+
+  <!-- automatically configure download and install ivy if required. -->
+  <condition property='ivy.home' value='${env.IVY_HOME}'>
+    <isset property='env.IVY_HOME' />
+  </condition>
+
+  <target name='download-ivy' unless='offline'>
+    <mkdir dir='${ivy.jar.dir}'/>
+    <get src='http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar'
+         dest='${ivy.jar.file}' usetimestamp='true'/>
+  </target>
+
+  <target name='init-ivy' depends='download-ivy'>
+    <path id='ivy.lib.path'>
+      <fileset dir='${ivy.jar.dir}' includes='*.jar'/>
+    </path>
+    <taskdef resource='org/apache/ivy/ant/antlib.xml'
+                 uri='antlib:org.apache.ivy.ant' classpathref='ivy.lib.path'/>
+  </target>
+
+  <target name="resolve" description="--> retrieve dependencies with ivy">
+    <ivy:retrieve />
+  </target>
+
+</project>

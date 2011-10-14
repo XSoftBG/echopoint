@@ -1,0 +1,68 @@
+<ivy-module version='2.2'>
+  <info organisation='EchoPoint' module='echopoint'/>
+
+  <dependencies>
+    <dependency org='javax.servlet' name='jsp-api' rev='2.0' >
+      <artifact name='jsp-api' type='jar' />
+    </dependency>
+
+    <dependency org='javax.servlet' name='servlet-api' rev='2.4' >
+      <artifact name='servlet-api' type='jar' />
+    </dependency>
+
+    <dependency org='org.jdom' name='jdom' rev='1.1' >
+      <artifact name='jdom' type='jar' />
+    </dependency>
+
+    <dependency org='commons-fileupload' name='commons-fileupload' rev='1.2.2' >
+      <artifact name='commons-fileupload' type='jar' />
+    </dependency>
+
+    <dependency org='commons-io' name='commons-io' rev='2.0.1' >
+      <artifact name='commons-io' type='jar' />
+    </dependency>
+
+    <dependency org='junit' name='junit' rev='4.8.2' >
+      <artifact name='junit' type='jar' />
+    </dependency>
+
+    <dependency org='xpp3' name='xpp3_min' rev='1.1.4c' >
+      <artifact name='xpp3_min' type='jar' />
+    </dependency>
+
+    <dependency org='com.thoughtworks.xstream' name='xstream' rev='1.3.1' >
+      <artifact name='xstream' type='jar' />
+    </dependency>
+
+    <dependency org='com.yahoo.platform.yui' name='yuicompressor' rev='2.4.6' >
+      <artifact name='yuicompressor' type='jar' />
+    </dependency>
+
+    <dependency org='eu.medsea.mimeutil' name='mime-util' rev='2.1.3' >
+      <artifact name='mime-util' type='jar' />
+    </dependency>
+
+
+    <exclude org='commons-beanutils' module='commons-beanutils' type='*' ext='*' conf='' matcher='exact' />
+    <exclude org='cglib' module='cglib-nodep' type='*' ext='*' conf='' matcher='exact' />
+    <exclude org='com.megginson.sax' module='xml-writer' ext='*' conf='' matcher='exact' />
+    <exclude org='dom4j' module='dom4j' ext='*' conf='' matcher='exact' />
+    <exclude org='joda-time' module='joda-time' ext='*' conf='' matcher='exact' />
+    <exclude org='org.codehaus.jettison' module='jettison' ext='*' conf='' matcher='exact' />
+    <exclude org='org.codehaus.woodstox' module='wstx-asl' ext='*' conf='' matcher='exact' />
+    <exclude org='stax' module='stax' ext='*' conf='' matcher='exact' />
+    <exclude org='stax' module='stax-api' ext='*' conf='' matcher='exact' />
+    <exclude org='xom' module='xom' ext='*' conf='' matcher='exact' />
+    <exclude org='org.jdom' module='jaxen-core' ext='*' conf='' matcher='exact' />
+    <exclude org='org.jdom' module='jaxen-jdom' ext='*' conf='' matcher='exact' />
+    <exclude org='org.jdom' module='saxpath' ext='*' conf='' matcher='exact' />
+    <exclude org='rhino' module='js' ext='*' conf='' matcher='exact' />
+    <exclude org='javax.portlet' module='portlet-api' ext='*' conf='' matcher='exact' />
+    <exclude org='portlet-api' module='portlet-api' ext='*' conf='' matcher='exact' />
+    <exclude org='saxpath' module='saxpath' ext='*' conf='' matcher='exact' />
+    <exclude org='xalan' module='xalan' ext='*' conf='' matcher='exact' />
+    <exclude org='xerces' module='xercesImpl' ext='*' conf='' matcher='exact' />
+    <exclude org='xerces' module='xmlParserAPIs' ext='*' conf='' matcher='exact' />
+  </dependencies>
+
+</ivy-module>

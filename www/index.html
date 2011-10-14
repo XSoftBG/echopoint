@@ -1,0 +1,163 @@
+<h2>Contribute to EchoPoint</h2>
+
+<p>We welcome contributions to the development of EchoPoint through either
+of the following means:
+
+<div id='wrapper' style='float: left; width: 100%;'>
+
+<div id='actions' style='float: left; width: 75%;'>
+<ul>
+  <li>Contribute to the development and porting of components.  There are
+  a lot of components that need to be ported over, as well as potentially
+  new components that reflect the state of the art in AJAX toolkits.  The
+  more people we get who are interested in creating custom components, the
+  better EchoPoint will become.</li>
+  <li>Donate to the project.  Donations help us allocate more time and
+  resources to the development work.  Please use the paypal button to
+  make a donation to the project.  You can use the message field to request
+  the area or component for which you would like your donation to apply.
+  You will be listed as a project sponsor in the <b>Sponsors</b> section.
+</ul>
+</div>
+
+<div id='paypal' style='float: right; width: 25%;'>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="3825299">
+<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+</div>
+
+</div>
+
+<div id='rest' style='width: 100%;'><p>&nbsp;</p></div>
+<h2>EchoPoint Component Library</h2>
+
+<p>EchoPoint component library for
+<a href='http://echo.nextapp.com/site/echo3'>NextApp Echo3</a> web
+application framework.  This project is a re-implementation of the
+<a href='http://docs.rakeshv.org/java/echopointng/'>EchoPointNG</a> library
+created by Brad Baker for
+<a href='http://echo.nextapp.com/site/echo2'>NextApp Echo2</a> web
+application framework.</p>
+
+<ul>
+  <li>The <a href='https://echopoint.dev.java.net/files/documents/9134/103119/ComponentList.xls'>Component List</a>
+  shows the list of components that will be re-implemented in EchoPoint.</li>
+  <li>Interested developers read the
+  <a href='https://echopoint.dev.java.net/files/documents/9134/103120/DeveloperGuide.pdf'>Developer Guide</a>
+  for notes on getting involved with the re-implementation work.</li>
+  <li><a href='http://sptci.com/echopointclienttest/'>View</a>
+  the test application for the client-side framework.  This will be updated
+  periodically as the test application is enhanced with tests for new
+  components added to the library.  You may also download the client and
+  server test applications that are available under
+  <a href='https://echopoint.dev.java.net/servlets/ProjectDocumentList?folderID=9553&expandFolder=9553&folderID=9553'>Documents &amp; files&gt;releases</a>.
+  <ul>
+    <li><a href='https://echopoint.dev.java.net/files/documents/9134/103787/echopointclienttest.war'>Client</a>
+    test application.  Note that you can unarchive the contents and test
+    off your filesystem without having to deploy to an application server.</li>
+    <li><a href='https://echopoint.dev.java.net/files/documents/9134/103786/echopointtest.war'>Server</a>
+    test application.  This will need to be deployed to an application
+    server to work.</li>
+  </ul>
+  </li>
+  <li><a href='http://sptci.com/projects/echopoint/api/app/'>View</a>
+  the server-side component API specifications.</li>
+</ul>
+
+<h3>History</h3>
+
+<p><a href='http://echopoint.sourceforge.net/'>EchoPoint</a> was created by
+Brad Baker as a rich component library for
+<a href='http://echo.nextapp.com/site/echo1'>Echo1</a>.  The project was
+later re-implemented as EchoPointNG for
+<a href='http://echo.nextapp.com/site/echo2'>Echo2</a> by Brad.  Brad has
+stopped work on EchoPoint due to time and family constraints.</p>
+
+<p>This project has been started by <a href='http://sptci.com/'>Sans
+  Pareil Technologies, Inc.</a>, who wishes to continue to use the extensive
+component library developed by Brad.  No further work on EchoPointNG is
+planned, however a new component library that replicates most of the common
+components of EchoPointNG for
+<a href='http://echo.nextapp.com/site/echo3'>Echo3</a> framework will be
+developed.</p>
+
+<p>Echo has changed quite radically from version 
+2 to 3 in that most component rendering is done in pure JavaScript on the
+client-side, thus reducing the server-side resource utilisation of Echo
+applications.  A regular port of EchoPointNG is hence not possible, and
+requires total rewrite of the rendering peers for all components.</p>
+
+
+<h3>Source Code</h3>
+
+The sources for the re-implementation work as well as the original
+EchoPointNG may be checked out from the project
+<a href='https://echopoint.dev.java.net/source/browse/echopoint/'>subversion</a>
+repository.
+
+<ul>
+  <li>EchoPoint
+  <a href='https://echopoint.dev.java.net/source/browse/echopoint/'>subversion</a>
+  repository.
+  <ul>
+    <li>Access the repository trunk at
+    <code>https://echopoint.dev.java.net/svn/echopoint/trunk</code>.</li>
+    <li><a href='https://echopoint.dev.java.net/source/browse/echopoint/trunk/'>View
+      repository trunk</a>.</li>
+    <li>Note that it is not recommended that users use the <code>trunk</code>
+    area since the status of the sources are likely to be unstable and not
+    entirely tested.  The <code>trunk</code> area is primarily for the use
+    of developers involved with implementing the library.  It is recommended
+    that users use the latest version from the <code>tags/current</code> area.
+    <ul>
+      <li>Access tags area at
+      <code>https://echopoint.dev.java.net/svn/echopoint/tags/current</code>.</li>
+      <li><a href='https://echopoint.dev.java.net/source/browse/echopoint/tags/current/'>View
+        tags area</a>.  Check out the latest tagged release after viewing
+      available tagged releases and use in your projects.</li>
+    </ul>
+  </ul>
+  <li>EchoPointNG
+  <a href='https://echopoint.dev.java.net/source/browse/echopoint/'>subversion</a>
+  repository.
+  <ul>
+    <li>Access repository at
+    <code>https://echopoint.dev.java.net/svn/echopoint/branches/ng</code>.</li>
+    <li><a href='https://echopoint.dev.java.net/source/browse/echopoint/branches/ng/'>View repository</a>.</li>
+  </ul>
+</ul>
+
+<h3>Dependencies</h3>
+
+The following libraries are used to build EchoPoint.  You will need them
+in your applications to satisfy runtime dependencies.  The release ZIP files
+contain the necessary libraries to build and deploy your applications using
+EchoPoint.
+
+<ul>
+  <li>Echo3, Echo3Extras</li>
+  <li>XStream 1.3+</li>
+  <li>Apache Commons File Upload and IO packages</li>
+  <li>mime-uitl</li>
+</ul>
+
+The following additional libraries are used to test and build the library.  These
+libraries are not included in the release package.
+
+<ul>
+  <li>JUnit 4.4 - Used in the server-side test application.</li>
+  <li>yuicompressor 2.3.5 - Used to package the client-side test application.</li>
+</ul>
+
+<h3>Sponsors</h3>
+
+The following companies have kindly provided support and sponsorship for
+the development of the library.  We are deeply grateful for their support.
+
+<ul>
+  <li><a href='http://sptci.com/'>Sans Pareil Technologies, Inc.</a></li>
+  <li><a href='http://tcnbroadcasting.com/index.jsp'>TCN Broadcasting</a></li>
+</ul>
