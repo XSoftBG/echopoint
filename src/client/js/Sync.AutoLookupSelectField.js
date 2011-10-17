@@ -340,7 +340,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     if( newSelectedOptionE && (newSelectedOptionE == this._popupDivE || newSelectedOptionE.id < 0) ) return; // it's not an option
     if( this._selectedOpt ) { this._selectedOpt.style.background = this._popupDivE.style.background;  this._selectedOpt.style.color = this.input.style.color; }// unselect: de-hilight to previous selected item
 		this._selectedOpt = newSelectedOptionE;
-		if( this._selectedOpt ) { this._selectedOpt.style.background = this._selectedBG; this._selectedOpt.style.color = this._selectedFG; } // select: hilight new selected option
+		if( this._selectedOpt ) { this._selectedOpt.style.background = this._selectedBG; this._selectedOpt.style.color = this._selectedFG; } // select: hightlight new selected option
 	},
 
   _isDropDownVisible: function() { return this._popupDivE.style.visibility != 'hidden'; },
@@ -422,14 +422,10 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     {
       this._cancelAnyAjaxCall();
 		}
-    if( this._comboMode )
-    {
-      this._comboAllEntries = this._searchEntries;
-      if( this._isDropDownVisible() )
-        this._showComboList(null);
-    }
+    this._comboAllEntries = this._searchEntries;
+    if( !this._comboMode ) this._showDropDown(); // now popilate the popup and display it
     else
-		  this._showDropDown(); // now popilate the popup and display it
+    if( this._isDropDownVisible() ) this._showComboList(null);
 	},
 	
 	/**
@@ -507,7 +503,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
         case 13: // ENTER
           this._tryStoreOption(event);
           this._processAddableMode();
-          break;
+          return; // _tryStoreOption always call _superStoreValue
         case 27: // ESC
         case 9 : // TAB
           this._closeDropDown();
