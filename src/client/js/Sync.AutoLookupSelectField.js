@@ -33,6 +33,8 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   _lm_portion: null, // lazy mode - portion
   _maxMenuSize: null,
   _processClickBodyRef: null,
+  _tooltipMode: false,
+  _excludeValue: false,
 
   $static: 
   {
@@ -134,6 +136,8 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     this._addableMode          = this.component.render('addableMode', true);
     this._cs                   = this.component.render('caseSensitive', false) && !this._upperCase && !this._lowerCase ? "" : "i";
     this._lm_portion           = this.component.render('lazyMode', null);
+    this._tooltipMode          = this.component.render('tooltipsMode', false);
+    this._excludeValue         = this.component.render('excludeValue', false);
     this._serviceURICombo      = "?sid=echopoint.AutoLookupSelectService&elementId=" + this.component.renderId;
     this._serviceURI           = this._serviceURICombo + "&searchValue=";
 
@@ -277,22 +281,35 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   {
     var entryDiv = document.createElement('div');
     entryDiv.id = entry.idx;
-    entryDiv.innerHTML = entry.value;
+    entryDiv.innerHTML = entry.searchVal;
     entryDiv.style.font = this.input.style.font;
     entryDiv.style.color = this.input.style.color;
     entryDiv.style.cursor = 'default';
     this._popupDivE.insertBefore(entryDiv, this._searchingStatusDivE); // we always have the statusbar div as a reference point
+    return entryDiv;
+  },
+
+  _createEntryDivTooltip: function(entry)
+  {
+    this._createEntryDiv(entry).title = entry.value;
   },
 
   _updateEntryDiv: function(entry, entryDiv)
   {
-    var entry_val = entry.value;
-    if( entry_val != entryDiv.innerHTML )
+    var entry_searchVal = entry.searchVal;
+    if( entryDiv.style.display == 'none' ) entryDiv.style.display = 'block';
+    if( entry_searchVal != entryDiv.innerHTML )
     {
       entryDiv.id = entry.idx;
-      entryDiv.innerHTML = entry_val;
+      entryDiv.innerHTML = entry_searchVal;
+      return true;
     }
-    if( entryDiv.style.display == 'none' ) entryDiv.style.display = 'block';
+    return false;
+  },
+
+  _updateEntryDivTooltip: function(entry, entryDiv)
+  {
+    if( this._updateEntryDiv(entry, entryDiv) ) entryDiv.title = entry.title;
   },
 
   _updateDropDown: function()
@@ -309,11 +326,20 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     var e2add_size    = this._maxMenuSize ? Math.min(this._searchEntries.length, this._maxMenuSize) : this._searchEntries.length;
     var e2update_size = Math.min(e2add_size, entries_size);
 
-    for(var i = 0; i < e2update_size; i++)
-      this._updateEntryDiv( this._searchEntries[i], entries[i] );
-
-    for(var i = e2update_size; i < e2add_size; i++)
-      this._createEntryDiv( this._searchEntries[i] );
+    if( this._tooltipMode )
+    {
+      for(var i = 0; i < e2update_size; i++)
+        this._updateEntryDivTooltip( this._searchEntries[i], entries[i] );
+      for(var i = e2update_size; i < e2add_size; i++)
+        this._createEntryDivTooltip( this._searchEntries[i] );
+    }
+    else
+    {
+      for(var i = 0; i < e2update_size; i++)
+        this._updateEntryDiv( this._searchEntries[i], entries[i] );
+      for(var i = e2update_size; i < e2add_size; i++)
+        this._createEntryDiv( this._searchEntries[i] );
+    }
 
     for(var i = e2add_size; i < entries_size; i++)
     {
@@ -404,14 +430,23 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
 			  if( autoLookUpModelE.length > 0 ) 
         {
 				  var entriesNL = autoLookUpModelE[0].getElementsByTagName('entry');
-		      for( var index = 0; index < entriesNL.length; index++ )  //convert from xml entry to LookupEntry
-          {
-				    var entryE = entriesNL[index];
-				    var value  = entryE.getElementsByTagName('value')[0].firstChild;
-				    var key    = entryE.getElementsByTagName('key')[0].firstChild;
-				    var search = entryE.getElementsByTagName('searchVal')[0].firstChild;
-				    this._searchEntries[index] = {idx: index, value: (value ? value.data : "&nbsp;"), key: (key ? key.data : ""), searchVal: (search ? search.data : "")};
-          }
+          if( !this._tooltipMode && this._excludeValue )
+            for( var index = 0; index < entriesNL.length; index++ )  //convert from xml entry to LookupEntry
+            {
+              var entryE = entriesNL[index];
+              var key    = entryE.getElementsByTagName('key')[0].firstChild;
+              var search = entryE.getElementsByTagName('searchVal')[0].firstChild;
+              this._searchEntries[index] = {idx: index, key: (key ? key.data : ""), searchVal: (search ? search.data : "")};
+            }
+          else
+            for( var index = 0; index < entriesNL.length; index++ )  //convert from xml entry to LookupEntry
+            {
+              var entryE = entriesNL[index];
+              var value  = entryE.getElementsByTagName('value')[0].firstChild;
+              var key    = entryE.getElementsByTagName('key')[0].firstChild;
+              var search = entryE.getElementsByTagName('searchVal')[0].firstChild;
+              this._searchEntries[index] = {idx: index, value: (value ? value.data : "&nbsp;"), key: (key ? key.data : ""), searchVal: (search ? search.data : "")};
+            }
 			  }
       }
       else

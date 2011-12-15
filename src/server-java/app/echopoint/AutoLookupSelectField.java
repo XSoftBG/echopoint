@@ -25,12 +25,13 @@ public class AutoLookupSelectField extends RegexTextField {
   public static final String PROPERTY_SELECTED_BG = "selectedBG";
   public static final String PROPERTY_SELECTED_FG = "selectedFG";
   public static final String PROPERTY_ACTION_CLICK = "actionClick";
+  public static final String PROPERTY_EXCLUDE_VALUE  = "excludeValue";
 
 
   /**
    * Creates a new <code>AutoLookupSelectField</code>.
    */
-  public AutoLookupSelectField() { super(); setActionClick(true); }
+  public AutoLookupSelectField() { super(); setActionClick(true); set(PROPERTY_EXCLUDE_VALUE, false); }
  
 
   /**
@@ -94,6 +95,15 @@ public class AutoLookupSelectField extends RegexTextField {
     */
   public void setSelectedOptionForeground( Color color ) { set(PROPERTY_SELECTED_FG, color); }
   public Color getSelectedOptionForeground() { return (Color)get(PROPERTY_SELECTED_FG); }
+  
+  /**
+    * Excludes the value and leaves only the search value in use.
+    * This reduces the traffic between the server and the client, resulting in improved performance.
+    *
+    * <b>Note:</b> Can't be used for ComboBox with tooltips.
+    */
+  public void    setExcludeValue(boolean b) { set(PROPERTY_EXCLUDE_VALUE, Boolean.valueOf(b)); }
+  public boolean getExcludeValue() { return ((Boolean)get(PROPERTY_EXCLUDE_VALUE)).booleanValue(); }
 
 	public AutoLookupSelectModel getAutoLookupModel() { return (AutoLookupSelectModel)get(PROPERTY_AUTO_LOOKUP_MODEL); }
 

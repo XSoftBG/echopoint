@@ -14,6 +14,7 @@ public class ComboBox extends AutoLookupSelectField
   public  static final String PROPERTY_CASE_SENSITIVE = "caseSensitive";
   public  static final String PROPERTY_ADDABLE_MODE   = "addableMode";
   public  static final String PROPERTY_LAZY_MODE      = "lazyMode";
+  public  static final String PROPERTY_TOOLTIPS_MODE  = "tooltipsMode";
   public static final ResourceImageReference default_popup_icon = new ResourceImageReference( "/resource/images/Decrement.gif" );
 
   private class ComboBoxModelListner implements ComboBoxModel.Listener
@@ -39,6 +40,7 @@ public class ComboBox extends AutoLookupSelectField
     this.set(PROPERTY_COMBOBOX_MODE, Boolean.TRUE);
     this.set(PROPERTY_CASE_SENSITIVE, Boolean.TRUE);
     this.set(PROPERTY_ADDABLE_MODE, Boolean.TRUE);
+    this.set(PROPERTY_TOOLTIPS_MODE, Boolean.FALSE);
   }
   
   /**
@@ -65,6 +67,12 @@ public class ComboBox extends AutoLookupSelectField
     */
   public void    setLazyMode(Integer portion) { set(PROPERTY_LAZY_MODE, portion); }
   public Integer getLazyMode() { return (Integer)get(PROPERTY_LAZY_MODE); }
+  
+  /**
+    * Determines whether or not tooltip to be displayed over each combobox element.
+    */
+  public void    setTooltipsMode(boolean b) { set(PROPERTY_TOOLTIPS_MODE, Boolean.valueOf(b)); }
+  public boolean getTooltipsMode() { return ((Boolean)get(PROPERTY_TOOLTIPS_MODE)).booleanValue(); }
 
 	public ComboBoxModel getComboBoxModel() { return (ComboBoxModel) get(PROPERTY_AUTO_LOOKUP_MODEL); }
 

@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import echopoint.AutoLookupSelectField;
+import echopoint.ComboBox;
 import echopoint.model.AutoLookupSelectFieldModel;
 import echopoint.model.AutoLookupSelectModel;
 import echopoint.model.AutoLookupSelectModel.EntrySelect;
@@ -89,21 +90,24 @@ public class AutoLookupSelectService implements Service {
 
 		List<EntrySelect> entries = searchValue == null ? autoLookupModel.getAllEntries() : ( (AutoLookupSelectFieldModel)autoLookupModel ).searchEntries(searchValue);
 		if (entries != null) {
+      final boolean include_val = textFieldEx instanceof ComboBox && ((ComboBox)textFieldEx).getTooltipsMode() || !textFieldEx.getExcludeValue();
 			for (EntrySelect entry : entries) {
 				Element entryE = doc.createElement("entry");
 				autoLookupModelE.appendChild(entryE);
 				
-				Element valueE = doc.createElement("value");
-				valueE.setTextContent(entry.getValue());
-				entryE.appendChild(valueE);
+        if( include_val ) {
+          Element valueE = doc.createElement("value");
+          valueE.setTextContent(entry.getValue());
+          entryE.appendChild(valueE);
+        }
 				
 				Element keyE = doc.createElement("key");
 				keyE.setTextContent(entry.getKey());
 				entryE.appendChild(keyE);
 				
-				Element searchE = doc.createElement("searchVal");
-				searchE.setTextContent(entry.getSearchVal());
-				entryE.appendChild(searchE);
+        Element searchE = doc.createElement("searchVal");
+        searchE.setTextContent(entry.getSearchVal());
+        entryE.appendChild(searchE);
 			}
 		}
 		dataElement.appendChild(autoLookupModelE);

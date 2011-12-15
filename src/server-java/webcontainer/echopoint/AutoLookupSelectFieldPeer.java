@@ -34,10 +34,12 @@ public class AutoLookupSelectFieldPeer extends RegexTextFieldPeer {
     addOutputProperty(AutoLookupSelectField.PROPERTY_SELECTED_BG);
     addOutputProperty(AutoLookupSelectField.PROPERTY_SELECTED_FG);
     addOutputProperty(AutoLookupSelectField.PROPERTY_ACTION_CLICK);
+    addOutputProperty(AutoLookupSelectField.PROPERTY_EXCLUDE_VALUE);
     addOutputProperty(ComboBox.PROPERTY_COMBO_LIST_CHANGED);
     addOutputProperty(ComboBox.PROPERTY_CASE_SENSITIVE);
     addOutputProperty(ComboBox.PROPERTY_ADDABLE_MODE);
     addOutputProperty(ComboBox.PROPERTY_LAZY_MODE);
+    addOutputProperty(ComboBox.PROPERTY_TOOLTIPS_MODE);
 	}
 	
 	@Override
@@ -69,6 +71,9 @@ public class AutoLookupSelectFieldPeer extends RegexTextFieldPeer {
     if( propertyName.equals(AutoLookupSelectField.PROPERTY_SELECTED_FG) )
       return ( (AutoLookupSelectField) component).getSelectedOptionForeground();
     else
+    if( propertyName.equals(AutoLookupSelectField.PROPERTY_EXCLUDE_VALUE) )
+      return ( (AutoLookupSelectField) component).getExcludeValue();
+    else
     if( propertyName.equals(ComboBox.PROPERTY_COMBO_LIST_CHANGED) )
     	return new Integer(combo_listchanged++);  // always unique value !
     else
@@ -80,6 +85,9 @@ public class AutoLookupSelectFieldPeer extends RegexTextFieldPeer {
     else
     if( propertyName.equals(ComboBox.PROPERTY_LAZY_MODE) )
       return (component instanceof ComboBox) ? ( (ComboBox) component).getLazyMode() : null;
+    else
+    if( propertyName.equals(ComboBox.PROPERTY_TOOLTIPS_MODE) )
+      return (component instanceof ComboBox) ? ( (ComboBox) component).getTooltipsMode() : false;
     else
       return super.getOutputProperty(context, component, propertyName, propertyIndex);
   }
