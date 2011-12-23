@@ -281,7 +281,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   {
     var entryDiv = document.createElement('div');
     entryDiv.id = entry.idx;
-    entryDiv.innerHTML = entry.searchVal;
+    entryDiv.innerHTML = entry.value;
     entryDiv.style.font = this.input.style.font;
     entryDiv.style.color = this.input.style.color;
     entryDiv.style.cursor = 'default';
@@ -291,17 +291,17 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
 
   _createEntryDivTooltip: function(entry)
   {
-    this._createEntryDiv(entry).title = entry.value;
+    this._createEntryDiv(entry).title = entry.searchVal;
   },
 
   _updateEntryDiv: function(entry, entryDiv)
   {
-    var entry_searchVal = entry.searchVal;
+    var entry_value = entry.value;
     if( entryDiv.style.display == 'none' ) entryDiv.style.display = 'block';
-    if( entry_searchVal != entryDiv.innerHTML )
+    if( entry_value != entryDiv.innerHTML )
     {
       entryDiv.id = entry.idx;
-      entryDiv.innerHTML = entry_searchVal;
+      entryDiv.innerHTML = entry_value;
       return true;
     }
     return false;
@@ -309,7 +309,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
 
   _updateEntryDivTooltip: function(entry, entryDiv)
   {
-    if( this._updateEntryDiv(entry, entryDiv) ) entryDiv.title = entry.title;
+    if( this._updateEntryDiv(entry, entryDiv) ) entryDiv.title = entry.searchVal;
   },
 
   _updateDropDown: function()
@@ -436,7 +436,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
               var entryE = entriesNL[index];
               var key    = entryE.getElementsByTagName('key')[0].firstChild;
               var search = entryE.getElementsByTagName('searchVal')[0].firstChild;
-              this._searchEntries[index] = {idx: index, key: (key ? key.data : ""), searchVal: (search ? search.data : "")};
+              this._searchEntries[index] = {idx: index, value: (search ? search.data : "&nbsp"), key: (key ? key.data : ""), searchVal: (search ? search.data : "")};
             }
           else
             for( var index = 0; index < entriesNL.length; index++ )  //convert from xml entry to LookupEntry
