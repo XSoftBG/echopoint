@@ -84,7 +84,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     }
   },
 
-	$load: function() { Echo.Render.registerPeer( echopoint.constants.AUTO_LOOKUP_SELECT_FIELD, this ); },
+	$load: function() {Echo.Render.registerPeer( echopoint.constants.AUTO_LOOKUP_SELECT_FIELD, this );},
 
 	$construct: function()
   {
@@ -97,8 +97,8 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   getSupportedPartialProperties: function() 
   {
 	  var v = echopoint.RegexTextFieldSync.prototype.getSupportedPartialProperties.call(this);
-    v.push("actionClick");   v.push("comboListChanged"); v.push("selectedBG"); v.push("selectedFG"); v.push("optMenuBG");
-    v.push("optMenuBorder"); v.push("key");              v.push("searchVal");  v.push("background");
+    v.push("actionClick");v.push("comboListChanged");v.push("selectedBG");v.push("selectedFG");v.push("optMenuBG");
+    v.push("optMenuBorder");v.push("key");v.push("searchVal");v.push("background");
     return v;
   },
 
@@ -181,7 +181,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     return this._isDropDownVisible() ? 0 : echopoint.RegexTextFieldSync.prototype.getFocusFlags.call(this); //prevent that up/down keys change the focus to another component scroll instead up/down in the popup entry list
   },
 
-  isTextFieldEditable: function() { return !this.input.readOnly && this.component.isEnabled(); },
+  isTextFieldEditable: function() {return !this.input.readOnly && this.component.isEnabled();},
  
   renderDisplay: function()
   {
@@ -364,21 +364,38 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
 	_selectOption: function( newSelectedOptionE ) 
   {                           
     if( newSelectedOptionE && (newSelectedOptionE == this._popupDivE || newSelectedOptionE.id < 0) ) return; // it's not an option
-    if( this._selectedOpt ) { this._selectedOpt.style.background = this._popupDivE.style.background;  this._selectedOpt.style.color = this.input.style.color; }// unselect: de-hilight to previous selected item
+    if( this._selectedOpt ) {this._selectedOpt.style.background = this._popupDivE.style.background;this._selectedOpt.style.color = this.input.style.color;}// unselect: de-hilight to previous selected item
 		this._selectedOpt = newSelectedOptionE;
-		if( this._selectedOpt ) { this._selectedOpt.style.background = this._selectedBG; this._selectedOpt.style.color = this._selectedFG; } // select: hightlight new selected option
+		if( this._selectedOpt ) {this._selectedOpt.style.background = this._selectedBG;this._selectedOpt.style.color = this._selectedFG;} // select: hightlight new selected option
 	},
 
-  _isDropDownVisible: function() { return this._popupDivE.style.visibility != 'hidden'; },
+  _isDropDownVisible: function() {return this._popupDivE.style.visibility != 'hidden';},
 
 	_showDropDown: function()
   {
     this._updateDropDown();
-    if( this._searchEntries.length == 0 ) { this._hideDropDown(); return; }
+    if( this._searchEntries.length == 0 ) {this._hideDropDown();return;}
 		if( this._isDropDownVisible() ) return;
+    
+    
 		var cellBounds = new Core.Web.Measure.Bounds(this.input);
+    
+    var result = this.findPositionWithScrolling(this.input);
+    
+    
+    
+    console.log("[ Bounds: Left -> " + cellBounds.left + " | Top -> " + (cellBounds.top + cellBounds.height));
+    console.log("[ Custom: Left -> " + result[0] + " | Top -> " + result[1]);
+    
+    
+    
+    
+    
+    
 		this._popupDivE.style.left       = cellBounds.left + 'px';
 		this._popupDivE.style.top        = (cellBounds.top + cellBounds.height) + 'px';
+    
+    
 		this._popupDivE.style.minWidth   = (cellBounds.width - 1) + 'px';
 		this._popupDivE.style.width      = this._popupDivE.style.minWidth;
     this._popupDivE.style.visibility = 'visible';
@@ -483,13 +500,13 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     }
   },
 
-  _processAddableMode: function() { if(!this._addableMode && this.component.get('key') == null && this._deferredSelectedOpt == null && this._deferredFoundOpt == null) this.input.value = ""; },
+  _processAddableMode: function() {if(!this._addableMode && this.component.get('key') == null && this._deferredSelectedOpt == null && this._deferredFoundOpt == null) this.input.value = "";},
 
   _scrollToPage: function( forward )
   {
     var scroll_pos_begin = this._popupDivE.scrollTop;
     var maxscroll_pos    = this._popupDivE.scrollHeight - this._popupDivE.clientHeight
-    do { this._scrollToOption(forward); }
+    do {this._scrollToOption(forward);}
     while( Math.abs(this._popupDivE.scrollTop - scroll_pos_begin) <= echopoint.AutoLookupSelectFieldSync.OPTIONS_MENU_HEIGHT &&
            this._popupDivE.scrollTop < maxscroll_pos && this._popupDivE.scrollTop > 0 );
   },
@@ -597,16 +614,16 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
 	_processClickOption: function(event)
   {
     this._selectOption( Core.Web.DOM.getEventTarget( event ? event : window.event ) );
-    this._tryStoreOption( this._actionClick ? { keyCode: 13, type: "keydown" } /*simulated ENTER*/ : null );
+    this._tryStoreOption( this._actionClick ? {keyCode: 13, type: "keydown"} /*simulated ENTER*/ : null );
     this.input.focus();  // we never want focus on the popup
 	},
 
 	/**
 	 * Mouse listener (creates rollover-effect)
 	 */
-	_processMouseoverOption: function(event) { this._selectOption( Core.Web.DOM.getEventTarget( event ? event : window.event ) ); },
+	_processMouseoverOption: function(event) {this._selectOption( Core.Web.DOM.getEventTarget( event ? event : window.event ) );},
 
-  _processScrollMenu: function(event) { this._processLazyMode(); },
+  _processScrollMenu: function(event) {this._processLazyMode();},
 
   _processClickBody: function(event)
   {
@@ -622,5 +639,48 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
       if( this._isDropDownVisible() ) this._closeDropDown(); else this._showOptionsMenu(null);
       this.input.focus();  // we never want focus on the popup
     }
-  }
+  },
+  
+  
+  findPositionWithScrolling: function( oElement ) {
+    
+    var getNextAncestor = function(oElement) {
+      var actualStyle;
+      if( window.getComputedStyle ) {
+        actualStyle = getComputedStyle(oElement,null).position;
+      } else if( oElement.currentStyle ) {
+        actualStyle = oElement.currentStyle.position;
+      } else {
+        //fallback for browsers with low support - only reliable for inline styles
+        actualStyle = oElement.style.position;
+      }
+      if( actualStyle == 'absolute' || actualStyle == 'fixed' ) {
+        //the offsetParent of a fixed position element is null so it will stop
+        return oElement.offsetParent;
+      }
+      return oElement.parentNode;
+    }
+    
+    if( typeof( oElement.offsetParent ) != 'undefined' ) {
+      var originalElement = oElement;
+      for( var posX = 0, posY = 0; oElement; oElement = oElement.offsetParent ) {
+        posX += oElement.offsetLeft;
+        posY += oElement.offsetTop;
+      }
+      if( !originalElement.parentNode || !originalElement.style || typeof( originalElement.scrollTop ) == 'undefined' ) {
+        //older browsers cannot check element scrolling
+        return [ posX, posY ];
+      }
+      oElement = getNextAncestor(originalElement);
+      while( oElement && oElement != document.body && oElement != document.documentElement ) {
+        posX -= oElement.scrollLeft;
+        posY -= oElement.scrollTop;
+        oElement = getNextAncestor(oElement);
+      }
+      return [ posX, posY ];
+    } else {
+      return [ oElement.x, oElement.y ];
+    }
+  }  
+  
 });
