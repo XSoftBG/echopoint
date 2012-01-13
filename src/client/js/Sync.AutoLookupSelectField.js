@@ -475,7 +475,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   _hideDropDown: function() 
   {
     if( !this._isDropDownVisible() ) return;
-    if(this.input.value.toUpperCase() === this._selectedOpt.innerHTML) { this._storeOption( this._comboAllEntries[this._selectedOpt.id] ); this._superStoreValue({ keyCode: 13, type: "keydown" }); }
+    if(this.input.value.toUpperCase() === this._selectedOpt.innerHTML.toUpperCase()) { this._storeOption( this._comboAllEntries[this._selectedOpt.id] ); this._superStoreValue({ keyCode: 13, type: "keydown" }); }
     this._selectOption(null);
     this._popupDivE.style.visibility = 'hidden';
     Core.Web.Event.remove(this._bodyE, "mousedown", this._processClickBodyRef, true);
