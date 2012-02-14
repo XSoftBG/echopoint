@@ -68,6 +68,14 @@ public class DownloadCommandPeer extends AbstractCommandSynchronizePeer
         return DownloadService.getInstance().createUri( userInstance, id );
       }
     } );
+    
+    addProperty("downloadMode", new AbstractCommandSynchronizePeer.PropertyPeer()
+    {
+      public Object getProperty(Context context, Command command)
+      {
+        return ((DownloadCommand) command).getDownloadMode();        
+      }
+    });
   }
 
   @Override

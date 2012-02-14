@@ -51,10 +51,15 @@ import echopoint.tucana.event.DownloadStartEvent;
  */
 public class DownloadCommand implements Command, RenderIdSupport, Serializable
 {
-  private static final long serialVersionUID = 1L;
+  public static final int MODE_DEFAULT = 0;
+  public static final int MODE_OPEN_IN_NEW_TAB = 1;
+  
+  private static final long serialVersionUID = 1L;  
 
   /** The render id for the command. */
   private String id;
+  
+  private int mode = MODE_DEFAULT;
 
   /** The download provider implementation for the command. */
   private DownloadProvider provider;
@@ -99,6 +104,22 @@ public class DownloadCommand implements Command, RenderIdSupport, Serializable
     this.provider = newValue;
   }
 
+  /**
+   * Defines if the download url should be opened in new tab.
+   */
+  public void setDownloadMode(int mode)
+  {
+    this.mode = mode;
+  }
+  
+  /**
+   * @return the download mode
+   */
+  public int getDownloadMode()
+  {
+    return mode;
+  }
+  
   /**
    * Returns the render id.
    *
