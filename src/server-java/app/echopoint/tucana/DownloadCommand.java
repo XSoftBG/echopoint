@@ -53,6 +53,7 @@ public class DownloadCommand implements Command, RenderIdSupport, Serializable
 {
   public static final int MODE_DEFAULT = 0;
   public static final int MODE_OPEN_IN_NEW_TAB = 1;
+  public static final int MODE_PRINT = 2;
   
   private static final long serialVersionUID = 1L;  
 
