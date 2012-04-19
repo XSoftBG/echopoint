@@ -10,6 +10,7 @@ Echo.RemoteClient.CommandExec.CloseBrowser = Core.extend(Echo.RemoteClient.Comma
     {
       if( !window.closed )
       { 
+        window.open("", "_self", "");
         window.close();
         if( navigator.appName == "Netscape" )
         {
