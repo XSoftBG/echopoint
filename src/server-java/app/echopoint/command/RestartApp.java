@@ -26,5 +26,24 @@ import nextapp.echo.app.Command;
  */
 public class RestartApp implements Command
 {
-  public RestartApp() {}
+  private final String cookiesToRemove;
+  
+  public RestartApp(String... cookiesToRemove)
+  {
+    StringBuilder builder = new StringBuilder();
+    
+    for(String cookieName : cookiesToRemove)
+      builder.append(cookieName).append(';');
+    
+    if(builder.length() == 0)
+      builder.append("JSESSIONID"); // default cookie to be removed
+    
+    builder.deleteCharAt(builder.length() - 1);
+    this.cookiesToRemove = builder.toString();
+  }
+  
+  public String getCookiesToRemove()
+  {
+    return cookiesToRemove;
+  }
 }

@@ -17,6 +17,7 @@
  */
 package echopoint.command;
 
+import nextapp.echo.app.Command;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.webcontainer.AbstractCommandSynchronizePeer;
 import nextapp.echo.webcontainer.ServerMessage;
@@ -38,7 +39,19 @@ public class RestartAppPeer extends AbstractCommandSynchronizePeer
   
   static { WebContainerServlet.getServiceRegistry().add(RESTART_APP_SERVICE); }
   
-  public RestartAppPeer() { super(); }
+  public RestartAppPeer()
+  { 
+    super();
+    addProperty( "cookiesToRemove", new AbstractCommandSynchronizePeer.PropertyPeer()
+    {
+      @Override
+      public Object getProperty( Context context, Command command )
+      {
+        final RestartApp restartCommand = (RestartApp) command;
+        return restartCommand.getCookiesToRemove();
+      }
+    } );
+  }
   
   /**
     * @see nextapp.echo.webcontainer.CommandSynchronizePeer#getCommandClass()
