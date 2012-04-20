@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Andre Schild (a.schild@aarboard.ch)
+ * Copyright (C) 2011 XSoft Ltd. (info@xsoftbg.com)
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -23,7 +23,7 @@
  * provisions above, a recipient may use your version of this file under the
  * terms of any one of the MPL, the GPL or the LGPL.
  *
- * @author Andre Schild Aarboard 2009-06-17
+ * @author  Miroslav Yozov
  * @version $Id: Aar.Ckeditor.js,v 1.17 2011-02-15 08:55:42 yozov Exp $
  */
 

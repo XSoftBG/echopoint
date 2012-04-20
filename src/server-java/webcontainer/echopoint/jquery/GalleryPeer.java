@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2011 XSoft Ltd. (info@xsoftbg.com)
+ *
  * This file is part of the Echo Point Project.  This project is a
  * collection of Components that have extended the Echo Web Application
  * Framework Version 3.
