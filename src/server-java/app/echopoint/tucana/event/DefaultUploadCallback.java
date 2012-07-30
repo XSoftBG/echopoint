@@ -61,9 +61,9 @@ public class DefaultUploadCallback extends UploadCallbackAdapter
    * @param directory The directory to which files are to be saved.
    * @throws IllegalArgumentException If the file specified is not a directory.
    */
-  public DefaultUploadCallback( final File directory ) throws IllegalArgumentException
+  public DefaultUploadCallback(final File directory) throws IllegalArgumentException
   {
-    setDirectory( directory );
+    setDirectory(directory);
   }
 
   /**
@@ -76,40 +76,34 @@ public class DefaultUploadCallback extends UploadCallbackAdapter
    *   uploaded file to the specified directory.
    */
   @Override
-  public void uploadSucceeded( final UploadFinishEvent event )
+  public void uploadSucceeded(final UploadFinishEvent event)
   {
     final File temp = getTempFile();
-    final File file = getFileName( event.getFileName() );
+    final File file = getFileName(event.getFileName());
 
     try
     {
-      event.getFileItem().write( temp );
+      event.getFileItem().write(temp);
 
-      if ( ! temp.renameTo( file ) )
+      if (!temp.renameTo(file))
       {
-        final BufferedOutputStream bos =
-            new BufferedOutputStream( new FileOutputStream( file ) );
-        final BufferedInputStream bis =
-            new BufferedInputStream( new FileInputStream( temp ) );
-        IOUtils.copy( bis, bos );
-        bis.close();
+        final BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+        final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(temp));
+        IOUtils.copy(bis, bos);
         bos.close();
         temp.delete();
-        logger.log( level, "Rename of temp file to " + file.getAbsolutePath() +
-            " failed.  Recopied from source." );
+        logger.log(level, "Rename of temp file to {0} failed.  Recopied from source.", file.getAbsolutePath());
       }
 
       event.getFileItem().delete();
-
-      logger.log( level, "Copied upload file contents to: " +
-          file.getAbsolutePath() );
+      logger.log(level, "Copied upload file contents to: {0}", file.getAbsolutePath());
     }
-    catch ( Exception e )
+    catch (Exception e)
     {
-      throw new RuntimeException( "Error copying uploaded file!", e );
+      throw new RuntimeException("Error copying uploaded file!", e);
     }
 
-    super.uploadSucceeded( event );
+    super.uploadSucceeded(event);
   }
 
   /**
@@ -119,9 +113,9 @@ public class DefaultUploadCallback extends UploadCallbackAdapter
    * @param name The file name of the uploaded file.
    * @return The new file object that represents the file to be saved.
    */
-  protected File getFileName( final String name )
+  protected File getFileName(final String name)
   {
-    return new File( directory.getAbsolutePath() + FILE_SEPARATOR + name );
+    return new File(directory.getAbsolutePath() + FILE_SEPARATOR + name);
   }
 
   /**
@@ -133,8 +127,7 @@ public class DefaultUploadCallback extends UploadCallbackAdapter
    */
   protected File getTempFile()
   {
-    return new File( directory.getAbsolutePath() + FILE_SEPARATOR +
-        "echopoint.tempfile." + System.currentTimeMillis() + ".tmp" );
+    return new File(directory.getAbsolutePath() + FILE_SEPARATOR + "echopoint.tempfile." + System.currentTimeMillis() + ".tmp");
   }
 
   /**
@@ -153,21 +146,19 @@ public class DefaultUploadCallback extends UploadCallbackAdapter
    * @param directory Value to set for property 'directory'.
    * @throws IllegalArgumentException If the file specified is not a directory.
    */
-  public void setDirectory( final File directory ) throws IllegalArgumentException
+  public void setDirectory(final File directory) throws IllegalArgumentException
   {
-    if ( ! directory.exists() )
+    if (!directory.exists())
     {
-      if ( ! directory.mkdirs() )
+      if (!directory.mkdirs()) 
       {
-        throw new IllegalArgumentException(
-            format( "Unable to create directory! {%s}", directory ) );
+        throw new IllegalArgumentException(format("Unable to create directory! {%s}", directory));
       }
     }
 
-    if ( ! directory.isDirectory() )
+    if (!directory.isDirectory())
     {
-      throw new IllegalArgumentException(
-          format( "File specified must be a directory! {%s}", directory ) );
+      throw new IllegalArgumentException(format("File specified must be a directory! {%s}", directory));
     }
 
     this.directory = directory;
