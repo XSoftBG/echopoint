@@ -75,7 +75,7 @@ http://www.gnu.org/licenses/gpl.html
 			function set_layout(){
 				$orig.parent().find('#loading').hide();
 				$orig.show();				
-				$orig.wrap('<div class="' + o.wrapperclass + '" style="width:' + (o.maxwidth + o.thumbcontainer + 12) + 'px; height: ' + (o.maxheight + 7) + 'px;"></div>');
+				$orig.wrap('<div class="' + o.wrapperclass + '" style="width:' + (o.maxwidth + o.thumbcontainer + 20) + 'px; height: ' + (o.maxheight + 7) + 'px;"></div>');
 				$outer = $orig.parent();	
 				$orig.find('li').css({'position':'absolute'});
 			}
