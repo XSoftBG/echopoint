@@ -43,41 +43,27 @@ echopoint.ClockSync = Core.extend(Echo.Render.ComponentSync, {
 
         var width = this.component.render(echopoint.ClockSync.WIDTH);
         var height = this.component.render(echopoint.ClockSync.HEIGHT);
-        if (width) {
-            this._clockdiv.style.width = width;
-        }
-        else {
-            this._clockdiv.style.width = "100%";
-        }
-        if (height) {
-            this._clockdiv.style.height = height;
-        }
-        else {
-            this._clockdiv.style.height = "100%";
-        }
+        this._clockdiv.style.width = width ? width : "100%";
+        this._clockdiv.style.height = height ? height : "100%";
+        
         Echo.Sync.Alignment.render(this.component.render(echopoint.ClockSync.ALIGNMENT), this._clockdiv, true, this.component);
         Echo.Sync.Insets.render(this.component.render(echopoint.ClockSync.INSETS), this._clockdiv, "padding");
         Echo.Sync.Border.render(this.component.render(echopoint.ClockSync.BORDER), this._clockdiv);
+        Echo.Sync.Color.renderClear( this.component.render(echopoint.ClockSync.FOREGROUND), this._clockdiv, "color");
+        Echo.Sync.Color.renderClear( this.component.render(echopoint.ClockSync.BACKGROUND), this._clockdiv, "backgroundColor");
+        Echo.Sync.Font.renderClear( this.component.render(echopoint.ClockSync.FONT), this._clockdiv);
+
+        var options = { format: echopoint.ClockSync.DEFAULT_FORMAT };
+        options.format = this.component.render('format', echopoint.ClockSync.DEFAULT_FORMAT);
+        $(this._clockdiv).jclock(options);
+
         parentElement.appendChild(this._clockdiv);
-        this._renderRequired = true;
     },
 
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
+        this._clockdiv.parentNode.removeChild(this._clockdiv);
         this._clockdiv = null;
-    },
-
-    renderDisplay: function() {
-        if (this._renderRequired) {
-            this._renderRequired = false;
-            var options = { format: echopoint.ClockSync.DEFAULT_FORMAT };
-            options.format = this.component.render('format', echopoint.ClockSync.DEFAULT_FORMAT);
-            jQuery("#"+this._clockdiv.id.replace('.', '\\.')).jclock(options);
-
-            Echo.Sync.Color.renderClear( this.component.render(echopoint.ClockSync.FOREGROUND), this._clockdiv, "color");
-            Echo.Sync.Color.renderClear( this.component.render(echopoint.ClockSync.BACKGROUND), this._clockdiv, "backgroundColor");
-            Echo.Sync.Font.renderClear( this.component.render(echopoint.ClockSync.FONT), this._clockdiv);
-        }
     },
 
     /** @see Echo.Render.ComponentSync#renderUpdate */
@@ -87,8 +73,6 @@ echopoint.ClockSync = Core.extend(Echo.Render.ComponentSync, {
         this.renderDispose(update);
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
-        return true;
+        return false; // Child elements not supported: safe to return false.
     }
-
-
 });
