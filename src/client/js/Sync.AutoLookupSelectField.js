@@ -36,6 +36,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   _processMouseScrollRef: null,
   _tooltipMode: false,
   _excludeValue: false,
+  _outstandingAjaxCallResponseHandlerRef: null,
 
   $static: 
   {
@@ -147,6 +148,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     this._storeValue      = this._storeInputValue;
     this._processClickBodyRef = Core.method(this, this._processClickBody);
     this._processMouseScrollRef = Core.method(this, this._processMouseScroll);
+    this._outstandingAjaxCallResponseHandlerRef = Core.method(this, this._ajaxResponse);
   },
 
   getSupportedPartialProperties: function() 
@@ -490,14 +492,14 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   },
 	
   /**
-	 * Called when the user presses the search button or click popup-button. We AJAX back to the server to get some new entries based on the argument 'val'.
-	 */
+    * Called when the user presses the search button or click popup-button. We AJAX back to the server to get some new entries based on the argument 'val'.
+    */
   _makeAjaxCall: function(val) 
   {
     this._cancelAnyAjaxCall(); // if we have an outstanding AJAX call in progress then we should cancell it. It may complete but we dont care for its results any more.
     this._updateSearchUI(true); // show the 'Searching status bar'
-    this._outstandingAjaxCall = new Core.Web.HttpConnection( val ? this._serviceURI + encodeURI(val) : this._serviceURICombo, "GET", null, "text/xml" ); // Make an AJAX call to search for new values
-    this._outstandingAjaxCall.addResponseListener( Core.method(this, this._ajaxResponse) );
+    this._outstandingAjaxCall = new Core.Web.HttpConnection( val ? this._serviceURI + encodeURI(val) : this._serviceURICombo, "GET", null, "text/xml" ); // Make an AJAX call to search for new values    
+    this._outstandingAjaxCall.addResponseListener(this._outstandingAjaxCallResponseHandlerRef);
     this._outstandingAjaxCall.connect();
   },
 
@@ -505,7 +507,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   {
     if( this._outstandingAjaxCall )
     {
-      this._outstandingAjaxCall.dispose();
+      this._outstandingAjaxCall.removeResponseListener(this._outstandingAjaxCallResponseHandlerRef);
       this._outstandingAjaxCall = null;
       this._updateSearchUI(false); // hide the 'Searching status bar'
     }
