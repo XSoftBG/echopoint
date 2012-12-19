@@ -202,7 +202,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     this._lm_portion           = this.component.render('lazyMode', null);
     this._tooltipMode          = this.component.render('tooltipsMode', false);
     this._excludeValue         = this.component.render('excludeValue', false);
-    this._serviceURICombo      = "?sid=echopoint.AutoLookupSelectService&elementId=" + this.component.renderId;
+    this._serviceURICombo      = "?sid=echopoint.AutoLookupSelectService&elementId=" + this.component.renderId.substring(2);
     this._serviceURI           = this._serviceURICombo + "&searchValue=";
 
     this._popupDivE = document.createElement('div'); // create drop down div

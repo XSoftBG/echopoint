@@ -47,7 +47,6 @@ public class AutoLookupSelectFieldPeer extends RegexTextFieldPeer {
 		super.init(context, component);
 		final ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
 		serverMessage.addLibrary(COMPONENT_NAME);
-		AutoLookupSelectService.getInstance().register((AutoLookupSelectField)component);
 	}
 	
 	@Override

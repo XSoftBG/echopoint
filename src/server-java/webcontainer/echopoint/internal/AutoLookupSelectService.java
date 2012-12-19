@@ -25,36 +25,28 @@ import echopoint.ComboBox;
 import echopoint.model.AutoLookupSelectFieldModel;
 import echopoint.model.AutoLookupSelectModel;
 import echopoint.model.AutoLookupSelectModel.EntrySelect;
+import nextapp.echo.app.ApplicationInstance;
+import nextapp.echo.webcontainer.UserInstance;
 
 public class AutoLookupSelectService implements Service {
 	
-	private static final AutoLookupSelectService INSTANCE;
-	private java.util.Map interestedParties = new HashMap();
+	public static final AutoLookupSelectService INSTANCE;
 	public static final String SERVICE_ID = "echopoint.AutoLookupSelectService";
 	
 	public static final Properties OUTPUT_PROPERTIES = new Properties();
     
-    static {
-        // The XML declaration is omitted as Internet Explorer 6 will operate in quirks mode if it is present.
-        OUTPUT_PROPERTIES.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        OUTPUT_PROPERTIES.putAll(DomUtil.OUTPUT_PROPERTIES_INDENT);
-        OUTPUT_PROPERTIES.setProperty(OutputKeys.DOCTYPE_PUBLIC, WindowHtmlService.XHTML_1_0_TRANSITIONAL_PUBLIC_ID);
-        OUTPUT_PROPERTIES.setProperty(OutputKeys.DOCTYPE_SYSTEM, WindowHtmlService.XHTML_1_0_TRANSITIONAL_SYSTEM_ID);
-    }
-    
-	static {
-		INSTANCE = new AutoLookupSelectService();
-	}
-	
-	public static AutoLookupSelectService getInstance(){
-		return INSTANCE;
-	}
+  static {
+      // The XML declaration is omitted as Internet Explorer 6 will operate in quirks mode if it is present.
+      OUTPUT_PROPERTIES.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      OUTPUT_PROPERTIES.putAll(DomUtil.OUTPUT_PROPERTIES_INDENT);
+      OUTPUT_PROPERTIES.setProperty(OutputKeys.DOCTYPE_PUBLIC, WindowHtmlService.XHTML_1_0_TRANSITIONAL_PUBLIC_ID);
+      OUTPUT_PROPERTIES.setProperty(OutputKeys.DOCTYPE_SYSTEM, WindowHtmlService.XHTML_1_0_TRANSITIONAL_SYSTEM_ID);
+
+      INSTANCE = new AutoLookupSelectService();
+  }
 	
 	public static void install() {
 		WebContainerServlet.getServiceRegistry().add(INSTANCE);
-	}
-	
-	private  AutoLookupSelectService(){
 	}
 
 	@Override
@@ -74,13 +66,14 @@ public class AutoLookupSelectService implements Service {
 
 		String elementId = request.getParameter("elementId");
 		String searchValue =  request.getParameter("searchValue");
-
-		AutoLookupSelectField textFieldEx = (AutoLookupSelectField) interestedParties.get(elementId);
-		if (textFieldEx == null) {
-			System.out.println(interestedParties);
+    
+    final UserInstance ui = conn.getUserInstance();
+    final ApplicationInstance ai = ui.getApplicationInstance();    
+		final AutoLookupSelectField textFieldEx = (AutoLookupSelectField) ai.getComponentByRenderId(elementId);
+		if (textFieldEx == null)
 			throw new IllegalStateException("Can not found AutolookupSelectField:" + elementId + ".");
-		}
-		AutoLookupSelectModel autoLookupModel = textFieldEx.getAutoLookupModel();
+    
+		final AutoLookupSelectModel autoLookupModel = textFieldEx.getAutoLookupModel();
 		if (autoLookupModel == null)
       throw new IllegalStateException("Can not found AutolookupSelectModel for AutolookupSelectField:" + elementId + ".");
 
@@ -118,13 +111,5 @@ public class AutoLookupSelectService implements Service {
     } catch (SAXException ex) {
         throw new SynchronizationException("Failed to write HTML document.", ex);
     }
-	}
-	
-	public synchronized void register(AutoLookupSelectField selectFieldEx) {
-		interestedParties.put("C." + selectFieldEx.getRenderId(), selectFieldEx);
-	}
-	
-	public synchronized void deregister(AutoLookupSelectField selectFieldEx) {
-		interestedParties.remove(selectFieldEx);
 	}
 }
