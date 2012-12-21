@@ -61,6 +61,10 @@ public class AutoLookupSelectService implements Service {
 
 	@Override
 	public void service(Connection conn) throws IOException {
+    Document doc = DomUtil.createDocument("xml", null, null, null);
+ 		Element dataElement = doc.getDocumentElement();
+		Element autoLookupModelE = doc.createElement("autoLookupModel");
+    
 		HttpServletRequest request = conn.getRequest();
     request.setCharacterEncoding("utf-8");
 
@@ -71,15 +75,17 @@ public class AutoLookupSelectService implements Service {
     final ApplicationInstance ai = ui.getApplicationInstance();    
 		final AutoLookupSelectField textFieldEx = (AutoLookupSelectField) ai.getComponentByRenderId(elementId);
 		if (textFieldEx == null)
-			throw new IllegalStateException("Can not found AutolookupSelectField:" + elementId + ".");
+    {
+      write(doc, conn);
+      return;
+    }
     
 		final AutoLookupSelectModel autoLookupModel = textFieldEx.getAutoLookupModel();
 		if (autoLookupModel == null)
-      throw new IllegalStateException("Can not found AutolookupSelectModel for AutolookupSelectField:" + elementId + ".");
-
-    Document doc = DomUtil.createDocument("xml", null, null, null);
- 		Element dataElement = doc.getDocumentElement();
-		Element autoLookupModelE = doc.createElement("autoLookupModel");
+    {
+      write(doc, conn);
+      return;
+    }
 
 		List<EntrySelect> entries = searchValue == null ? autoLookupModel.getAllEntries() : ( (AutoLookupSelectFieldModel)autoLookupModel ).searchEntries(searchValue);
 		if (entries != null) {
@@ -104,12 +110,16 @@ public class AutoLookupSelectService implements Service {
 			}
 		}
 		dataElement.appendChild(autoLookupModelE);
-
-		conn.setContentType(ContentType.TEXT_XML);
+    write(doc, conn);
+	}
+  
+  void write(Document doc, Connection conn) throws SynchronizationException
+  {
+    conn.setContentType(ContentType.TEXT_XML);
     try {
       DomUtil.save(doc, conn.getWriter(), OUTPUT_PROPERTIES);
     } catch (SAXException ex) {
         throw new SynchronizationException("Failed to write HTML document.", ex);
     }
-	}
+  }
 }
