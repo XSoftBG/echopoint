@@ -686,16 +686,17 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   {
     if( this._selectedOpt )
     {
-      this.input.value = (this._selectedOpt.innerHTML == "&nbsp;" ? "" : this._selectedOpt.innerHTML);
+      var selectedEntry = this._comboAllEntries[this._selectedOpt.id];
+      this.input.value = selectedEntry.searchVal;
       if(this.client.verifyInput(this.component))
       {
-        this._storeOption( this._comboAllEntries[this._selectedOpt.id] );
+        this._storeOption( selectedEntry );
         this._storeSelection();
         this._superStoreValue(event);
       }
       else
       {
-        this._deferredSelectedOpt = this._comboAllEntries[this._selectedOpt.id];
+        this._deferredSelectedOpt = selectedEntry;
         this._superStoreValue(event); // register processInputRestrictionsClear listener !
         return; // waiting for callback: processInputRestrictionsClear
       }
