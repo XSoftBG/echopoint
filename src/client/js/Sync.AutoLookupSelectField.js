@@ -137,7 +137,8 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     }
   },
 
-  $load: function() {
+  $load: function()
+  {
     Echo.Render.registerPeer( echopoint.constants.AUTO_LOOKUP_SELECT_FIELD, this );
   },
 
@@ -202,7 +203,8 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     this._lm_portion           = this.component.render('lazyMode', null);
     this._tooltipMode          = this.component.render('tooltipsMode', false);
     this._excludeValue         = this.component.render('excludeValue', false);
-    this._serviceURICombo      = "?sid=echopoint.AutoLookupSelectService&elementId=" + this.component.renderId;
+    this._serviceURICombo      = "?sid=echopoint.AutoLookupSelectService&elementId=" + this.component.renderId.substring(2) +
+                                 (this.client._uiid !== null ? "&uiid="+this.client._uiid : "");
     this._serviceURI           = this._serviceURICombo + "&searchValue=";
 
     this._popupDivE = document.createElement('div'); // create drop down div
@@ -244,15 +246,13 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     return this._isDropDownVisible() ? 0 : echopoint.RegexTextFieldSync.prototype.getFocusFlags.call(this); //prevent that up/down keys change the focus to another component scroll instead up/down in the popup entry list
   },
 
-  isTextFieldEditable: function() {
-    return !this.input.readOnly && this.component.isEnabled();
-  },
+  isTextFieldEditable: function() { return !this.input.readOnly && this.component.isEnabled(); },
  
   renderDisplay: function()
   {
     echopoint.RegexTextFieldSync.prototype.renderDisplay.call(this); //call super method
     var popup_ico_height = new Core.Web.Measure.Bounds(this._popupButton).height;
-    if(popup_ico_height == 0) popup_ico_height = 10;
+    if(popup_ico_height === 0) popup_ico_height = 10;
     this._popupButton.style.marginTop = (new Core.Web.Measure.Bounds(this.input).height- popup_ico_height)/2 + "px";
   },
 
@@ -277,7 +277,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   _calcComboList: function(val)
   {
     this._maxMenuSize = this._lm_portion;
-    if( val == null ) // show full list
+    if( val === null ) // show full list
       this._searchEntries = this._comboAllEntries;
     else
     {
@@ -290,7 +290,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
         if( val_reg_expr.test(entry.searchVal) )
         {
           this._searchEntries.push(entry);
-          if( !desired_eidx && val == entry.searchVal )
+          if( !desired_eidx && val === entry.searchVal )
             desired_eidx = this._searchEntries.length-1;
         }
       }
@@ -326,7 +326,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     if( this._comboMode )
     {
       var opt = this._showComboList(val);
-      if( val != null )
+      if( val !== null )
         if(this.client.verifyInput(this.component))
           this._storeOptionValue( opt );
         else
@@ -341,8 +341,8 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
 	 */	
   _updateSearchUI: function( isSearching ) 
   {
-    if(this._notFoundStatusDivE.innerHTML != null && isSearching) this._notFoundStatusDivE.style.display = 'none';
-    if(this._searchingStatusDivE.innerHTML != null) this._searchingStatusDivE.style.display = isSearching ? 'block' : 'none';
+    if(this._notFoundStatusDivE.innerHTML !== null && isSearching) this._notFoundStatusDivE.style.display = 'none';
+    if(this._searchingStatusDivE.innerHTML !== null) this._searchingStatusDivE.style.display = isSearching ? 'block' : 'none';
   },
 	
   _createEntryDiv: function(entry)
@@ -365,8 +365,8 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   _updateEntryDiv: function(entry, entryDiv)
   {
     var entry_value = entry.value;
-    if( entryDiv.style.display == 'none' ) entryDiv.style.display = 'block';
-    if( entry_value != entryDiv.innerHTML )
+    if( entryDiv.style.display === 'none' ) entryDiv.style.display = 'block';
+    if( entry_value !== entryDiv.innerHTML )
     {
       entryDiv.id = entry.idx;
       entryDiv.innerHTML = entry_value;
@@ -384,7 +384,8 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   {
     this._updateOptions();
     if(this._autoselect) this._selectOption(this._firstEntryDiv);  // first is auto selected when adding
-    if(this._notFoundStatusDivE.innerHTML != null) this._notFoundStatusDivE.style.display = this._searchEntries.length == 0 ? 'block' : 'none'; // if we have no matching options then show some text indicating this
+    if(this._notFoundStatusDivE.innerHTML !== null)
+      this._notFoundStatusDivE.style.display = this._searchEntries.length === 0 ? 'block' : 'none'; // if we have no matching options then show some text indicating this
   },
 
   _updateOptions: function()
@@ -412,7 +413,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     for(var i = e2add_size; i < entries_size; i++)
     {
       var entryDiv = entries[i];
-      if(entryDiv.style.display != 'none') entryDiv.style.display = 'none';
+      if(entryDiv.style.display !== 'none') entryDiv.style.display = 'none';
     }
     if( e2add_size > 0 )
     {
@@ -431,7 +432,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
 	 */
   _selectOption: function( newSelectedOptionE ) 
   {                           
-    if( newSelectedOptionE && (newSelectedOptionE == this._popupDivE || newSelectedOptionE.id < 0) ) return; // it's not an option
+    if( newSelectedOptionE && (newSelectedOptionE === this._popupDivE || newSelectedOptionE.id < 0) ) return; // it's not an option
     if( this._selectedOpt ) {
       this._selectedOpt.style.background = this._popupDivE.style.background;
       this._selectedOpt.style.color = this.input.style.color;
@@ -443,14 +444,13 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     } // select: hightlight new selected option
   },
 
-  _isDropDownVisible: function() {
-    return this._popupDivE.style.visibility != 'hidden';
-  },
+  _isDropDownVisible: function() { return this._popupDivE.style.visibility !== 'hidden'; },
 
   _showDropDown: function()
   {
     this._updateDropDown();
-    if( this._searchEntries.length == 0 ) {
+    if( this._searchEntries.length === 0 )
+    {
       this._hideDropDown();
       return;
     }
@@ -539,7 +539,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
                 value: (search ? search.data : "&nbsp"), 
                 key: (key ? key.data : ""), 
                 searchVal: (search ? search.data : "")
-                };
+              };
             }
           else
             for( var index = 0; index < entriesNL.length; index++ )  //convert from xml entry to LookupEntry
@@ -553,7 +553,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
                 value: (value ? value.data : "&nbsp;"), 
                 key: (key ? key.data : ""), 
                 searchVal: (search ? search.data : "")
-                };
+              };
             }
         }
       }
@@ -582,7 +582,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
 	
   _processLazyMode: function()
   {
-    if( this._popupDivE.scrollTop == (this._popupDivE.scrollHeight - this._popupDivE.clientHeight) && this._maxMenuSize && this._maxMenuSize < this._searchEntries.length) // reaches the end of scroll and we have more options
+    if( this._popupDivE.scrollTop === (this._popupDivE.scrollHeight - this._popupDivE.clientHeight) && this._maxMenuSize && this._maxMenuSize < this._searchEntries.length) // reaches the end of scroll and we have more options
     {
       this._maxMenuSize += this._lm_portion;
       var lastEntry = this._lastEntryDiv;
@@ -591,15 +591,18 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     }
   },
 
-  _processAddableMode: function() {
-    if(!this._addableMode && this.component.get('key') == null && this._deferredSelectedOpt == null && this._deferredFoundOpt == null) this.input.value = "";
+  _processAddableMode: function()
+  {
+    if(!this._addableMode && this.component.get('key') === null && this._deferredSelectedOpt === null && this._deferredFoundOpt === null)
+      this.input.value = "";
   },
 
   _scrollToPage: function( forward )
   {
     var scroll_pos_begin = this._popupDivE.scrollTop;
-    var maxscroll_pos    = this._popupDivE.scrollHeight - this._popupDivE.clientHeight
-    do {
+    var maxscroll_pos    = this._popupDivE.scrollHeight - this._popupDivE.clientHeight;
+    do
+    {
       this._scrollToOption(forward);
     }
     while( Math.abs(this._popupDivE.scrollTop - scroll_pos_begin) <= echopoint.AutoLookupSelectFieldSync.OPTIONS_MENU_HEIGHT &&
@@ -614,7 +617,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
     if( this._selectedOpt )
     {
       var newSelectionE = (forward ? this._selectedOpt.nextSibling : this._selectedOpt.previousSibling);
-      if( newSelectionE && (newSelectionE != this._popupDivE && newSelectionE.id >= 0) )
+      if( newSelectionE && (newSelectionE !== this._popupDivE && newSelectionE.id >= 0) )
       {
         this._popupDivE.scrollTop += (forward ? new Core.Web.Measure.Bounds(this._selectedOpt).height : -new Core.Web.Measure.Bounds(newSelectionE).height);
         this._selectOption(newSelectionE);
@@ -623,7 +626,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
         this._processLazyMode();
     }
     else
-    if( !this._autoSelect && this._firstEntryDiv != null ) 
+    if( !this._autoSelect && this._firstEntryDiv !== null )
       this._selectOption( this._firstEntryDiv );
   },
 
@@ -636,16 +639,16 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
       switch( event.keyCode )
       {
         case 33: // PAGE UP
-          if( event.type == "keydown" ) this._scrollToPage(false);
+          if( event.type === "keydown" ) this._scrollToPage(false);
           break;
         case 34: // PAGE DOWN
-          if( event.type == "keydown" ) this._scrollToPage(true);
+          if( event.type === "keydown" ) this._scrollToPage(true);
           break;
         case 38: // UP ARROW
-          if( event.type == "keydown" ) this._scrollToOption(false);
+          if( event.type === "keydown" ) this._scrollToOption(false);
           break;
         case 40: // DOWN ARROW
-          if( event.type == "keydown" ) this._scrollToOption(true);
+          if( event.type === "keydown" ) this._scrollToOption(true);
           break;
         case 13: // ENTER
           this._tryStoreOption(event);
@@ -656,7 +659,7 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
           this._closeDropDown();
           break;
         default: // all other keys
-          if( this._lastFilteredVal != this.input.value )
+          if( this._lastFilteredVal !== this.input.value )
           {
             this._lastFilteredVal = this.input.value;
             this._showOptionsMenu( this.input.value );
@@ -686,16 +689,17 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   {
     if( this._selectedOpt )
     {
-      this.input.value = (this._selectedOpt.innerHTML == "&nbsp;" ? "" : this._selectedOpt.innerHTML);
+      var selectedEntry = this._comboAllEntries[this._selectedOpt.id];
+      this.input.value = selectedEntry.searchVal;
       if(this.client.verifyInput(this.component))
       {
-        this._storeOption( this._comboAllEntries[this._selectedOpt.id] );
+        this._storeOption( selectedEntry );
         this._storeSelection();
         this._superStoreValue(event);
       }
       else
       {
-        this._deferredSelectedOpt = this._comboAllEntries[this._selectedOpt.id];
+        this._deferredSelectedOpt = selectedEntry;
         this._superStoreValue(event); // register processInputRestrictionsClear listener !
         return; // waiting for callback: processInputRestrictionsClear
       }
@@ -719,13 +723,12 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   /**
 	 * Mouse listener (creates rollover-effect)
 	 */
-  _processMouseoverOption: function(event) {
+  _processMouseoverOption: function(event)
+  {
     this._selectOption( Core.Web.DOM.getEventTarget( event ? event : window.event ) );
   },
 
-  _processScrollMenu: function(event) {
-    this._processLazyMode();
-  },
+  _processScrollMenu: function(event) { this._processLazyMode(); },
 
   _processClickBody: function(event)
   {
@@ -737,24 +740,6 @@ echopoint.AutoLookupSelectFieldSync = Core.extend( echopoint.RegexTextFieldSync,
   _processMouseScroll: function(event)
   {
     this._processClickBody(event);
-    
-//    var cellBounds = new Core.Web.Measure.Bounds(this.input);
-//    var inputPosition = echopoint.AutoLookupSelectFieldSync.findPositionWithScrolling(this.input);
-//    
-//    console.log("Bounds: L -> " + cellBounds.left + " | T -> " + cellBounds.top);
-//    console.log("Postion: L -> " + inputPosition[0] + " | T -> " + inputPosition[1]);
-//    
-//    var allParents = [];
-//    var p = this.input.parentNode;
-//    while(p) {
-//      allParents.push(p);
-//      p = p.parentNode;
-//    }
-//    
-//    console.log(allParents);
-    
-//    this._popupDivE.style.left = inputPosition[0] + 'px';
-//    this._popupDivE.style.top  = (inputPosition[1] + cellBounds.height) + 'px'; 
   },
 
   _processClickPopupButton: function(event)
