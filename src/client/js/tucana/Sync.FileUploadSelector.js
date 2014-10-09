@@ -71,8 +71,7 @@ echopoint.tucana.FileUploadSelectorSync = Core.extend( echopoint.internal.Abstra
   {
     for ( var uploadId in this._frames )
     {
-      if ( ( uploadId != 'remove' ) && ( uploadId != 'contains' )
-          && ( uploadId != 'indexOf' ) )
+      if ( uploadId != 'remove' && uploadId != 'contains' && uploadId != 'indexOf' )
       {
         this._frames[uploadId]._dispose();
       }
@@ -216,8 +215,8 @@ echopoint.tucana.FileUploadSelectorSync = Core.extend( echopoint.internal.Abstra
 
   _createUploadUrl: function()
   {
-    return echopoint.tucana.FileUploadSelectorSync._RECEIVER_SERVICE + "&i=" +
-           this.component.renderId + "&x=" + this._uploadIndex;
+    return echopoint.tucana.FileUploadSelectorSync._RECEIVER_SERVICE + "&i=" + this.component.renderId +
+           (this.client._uiid !== null ? "&uiid="+this.client._uiid : "") + "&x=" + this._uploadIndex;
   },
 
   /**
@@ -348,8 +347,7 @@ echopoint.tucana.FileUploadSelectorSync.Frame = Core.extend(
   {
     //var processLoad = Core.method( this, this._processLoad );
     var frameId = this.component.renderId + "|Frame|" + this._uploadIndex;
-    var srcUrl =
-        this.peer.client.getResourceUrl( "Echo", "resource/Blank.html" );
+    var srcUrl = this.peer.client.getResourceUrl( "Echo", "resource/Blank.html" );
 
     if ( Core.Web.Env.BROWSER_INTERNET_EXPLORER )
     {
@@ -469,19 +467,15 @@ echopoint.tucana.FileUploadSelectorSync.Frame = Core.extend(
     }
 
     var status = uploadProgress.status;
-    if ( ( status == "completed" ) || ( status == "failed") ||
-        ( status == "cancelled" ) || ( status == "disallowed" ) )
+    if ( status == "completed" || status == "failed" || status == "cancelled"  || status == "disallowed" )
     {
       if ( uploadProgress.message )
       {
         if ( progressBar && progressBar.peer.displayed )
-        {
           progressBar.set( echopoint.ProgressBar.TEXT, uploadProgress.message );
-        }
         else
-        {
-          if ( status != "completed" ) alert( uploadProgress.message );
-        }
+        if ( status != "completed" )
+          alert( uploadProgress.message );
       }
 
       this._uploadEnded();
@@ -547,8 +541,8 @@ echopoint.tucana.FileUploadSelectorSync.Frame = Core.extend(
 
   _createProgressUrl: function()
   {
-    return echopoint.tucana.FileUploadSelectorSync._PROGRESS_SERVICE +
-           "&i=" + this.component.renderId + "&x=" + this._uploadIndex;
+    return echopoint.tucana.FileUploadSelectorSync._PROGRESS_SERVICE + "&i=" + this.component.renderId +
+           (this.peer.client._uiid !== null ? "&uiid="+this.peer.client._uiid : "") + "&x=" + this._uploadIndex;
   },
 
   _dispose: function()
@@ -598,11 +592,9 @@ echopoint.tucana.FileUploadSelectorSync.Frame = Core.extend(
       }, 0 );
     }
     else
+    if ( this._frameElement )
     {
-      if ( this._frameElement )
-      {
-        Core.Web.DOM.removeNode( this._frameElement );
-      }
+      Core.Web.DOM.removeNode( this._frameElement );
     }
 
     this.component = null;
@@ -796,17 +788,6 @@ echopoint.tucana.FileUploadSelectorSync.Button = Core.extend(
     this._renderButton( false, parentElement );
   },
 
-  _renderDispose: function()
-  {
-    /*
-    if ( this._cancel )
-    {
-      Core.Web.Event.remove( this._submit, "onclick",
-          Core.method( this, this._cancelAction ), false );
-    }
-    */
-  },
-
   _renderStyle: function()
   {
     this._setButtonMode();
@@ -907,41 +888,12 @@ echopoint.tucana.FileUploadSelectorSync.Button = Core.extend(
     this._submit.setAttribute( "type", mode );
     if ( mode == "image" )
     {
-      var src = null;
-
-      if ( uploading )
-      {
-        src = ( this._cancel ) ? this._cancelImage : this._waitImage;
-      }
-      else
-      {
-        src = this._uploadImage;
-      }
-
+      var src = uploading ? (this._cancel ? this._cancelImage : this._waitImage) : this._uploadImage;
       this._submit.setAttribute( "src", src );
     }
     else
     {
-      var text;
-      var disabled = false;
-
-      if ( uploading )
-      {
-        if ( this._cancel )
-        {
-          text = this._cancelText;
-        }
-        else
-        {
-          text = this._waitText;
-          disabled = true;
-        }
-      }
-      else
-      {
-        text = this._uploadText;
-      }
-
+      var text = uploading ? (this._cancel ? this._cancelText : this._waitText) : this._uploadText;
       if ( text == null )
       {
         this._submit.removeAttribute( "value" );
@@ -963,7 +915,7 @@ echopoint.tucana.FileUploadSelectorSync.Button = Core.extend(
     var displayType = this._display;
     if ( displayType == "auto" )
     {
-      displayType = ( Core.Web.Env.BROWSER_SAFARI ) ? "left" : "right";
+      displayType = Core.Web.Env.BROWSER_SAFARI ? "left" : "right";
     }
 
 
