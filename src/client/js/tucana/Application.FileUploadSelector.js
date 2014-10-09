@@ -144,7 +144,7 @@ echopoint.tucana.UploadProgress = Core.extend(
       this.estimatedTimeLeft = data.tl;
       this.status = data.s;
       var m = data.m;
-      if ( m && ( m != "null") && ( m != "" ) ) this.message = m;
+      if ( m && m != "null" && m != "" ) this.message = m;
     }
   }
 });
